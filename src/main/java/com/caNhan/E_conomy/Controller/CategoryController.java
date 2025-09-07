@@ -1,7 +1,9 @@
 package com.caNhan.E_conomy.Controller;
 
+import com.caNhan.E_conomy.Dto.CategoryDTO;
 import com.caNhan.E_conomy.Entity.Category;
-import com.caNhan.E_conomy.Service.CategoryService;
+import com.caNhan.E_conomy.Response.ResponseData;
+import com.caNhan.E_conomy.Service.Impl.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,42 +12,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/api/category")
 public class CategoryController {
-    private CategoryService categoryService;
+    private CategoryServiceImpl categoryService;
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryServiceImpl categoryService) {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/add")
-    public Category addCategory (@RequestBody Category category) {
-        return categoryService.saveCategory(category);
+    @PostMapping("/create")
+    private ResponseEntity<ResponseData<Category>> addCategory (@ModelAttribute CategoryDTO categoryDTO) {
+        Category category = categoryService.create(categoryDTO);
+        ResponseData<Category> responseData = new ResponseData<>(
+                HttpStatus.OK.value(),
+                "Tạo danh mục thành công",
+                category
+        );
+        return ResponseEntity.ok(responseData);
     }
+
     @GetMapping("/getAll")
-    public List<Category> getAllCategory () {
-        return categoryService.findAllCategory();
-    }
-    @GetMapping("{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable int id){
-        Category category = categoryService.findCategoryById(id);
-        return ResponseEntity.ok(category);
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable int id, @RequestBody Category newCategory) {
-        Category category = categoryService.findCategoryById(id);
-        if(category != null){
-            category.setCategoryName(newCategory.getCategoryName());
-        }
-        categoryService.saveCategory(category);
-        return ResponseEntity.ok(category);
+    private ResponseEntity<ResponseData<?>> getAllCategory () {
+       List<Category> categories = categoryService.readAll();
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Tạo danh mục thành công",
+                categories);
+        return ResponseEntity.ok(responseData);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> deleteCategory (@PathVariable int id){
-        Category category = categoryService.findCategoryById(id);
-        categoryService.deleteCategory(category);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping("/update")
+    private ResponseEntity<?> updateCategory(@RequestParam(name = "categoryId") Long categoryId,
+                                             @ModelAttribute CategoryDTO categoryDto) {
+       Category category = categoryService.update(categoryId,categoryDto);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Cập nhập danh mục thành công",
+                category);
+        return  ResponseEntity.ok(responseData);
     }
 }

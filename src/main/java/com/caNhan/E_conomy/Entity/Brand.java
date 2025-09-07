@@ -10,12 +10,11 @@ import java.util.List;
 public class Brand {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "BrandName")
+    private Long id;
+    @Column(name = "brand_name")
     private String  brandName;
-    @Column(name = "imageBrand", columnDefinition = "LONGBLOB")
-    @Lob
-    private byte[] imageBrand;
+    @Column(name = "url_image_brand")
+    private String urlImageBrand;
 
     // Mapping
     @ManyToMany (cascade = CascadeType.ALL)
@@ -24,20 +23,19 @@ public class Brand {
             joinColumns = @JoinColumn(name = "brand_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
     )
-    @JsonIgnore
     private List<Category> categories;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "brands")
-    @JsonIgnore
-    private List<Product> products;
-    public Brand() {
-    }
+//    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "brands")
+//    @JsonIgnore
+//    private List<Product> products;
+//    public Brand() {
+//    }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,12 +47,12 @@ public class Brand {
         this.brandName = brandName;
     }
 
-    public byte[] getImageBrand() {
-        return imageBrand;
+    public String getUrlImageBrand() {
+        return urlImageBrand;
     }
 
-    public void setImageBrand(byte[] imageBrand) {
-        this.imageBrand = imageBrand;
+    public void setUrlImageBrand(String urlImageBrand) {
+        this.urlImageBrand = urlImageBrand;
     }
 
     public List<Category> getCategories() {
@@ -65,11 +63,11 @@ public class Brand {
         this.categories = categories;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+//    public List<Product> getProducts() {
+//        return products;
+//    }
+//
+//    public void setProducts(List<Product> products) {
+//        this.products = products;
+//    }
 }

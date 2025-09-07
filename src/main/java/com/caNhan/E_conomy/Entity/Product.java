@@ -7,53 +7,49 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "Products")
+@Table(name = "products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "ProductName")
+    private Long id;
+    @Column(name = "product_code", unique = true, length = 50)
+    private String productCode;
+    @Column(name = "product_name")
     private String productName;
-    @Column(name = "PricePrevious")
-    private double pricePrevious;
-    @Column(name = "PriceCurrent")
-    private double priceCurrent;
-    @Column(name = "DiscountPercent")
-    private String discountPercent;
-    @Column(name = "Quantity")
-    private String quantity;
-    @Column(name = "Status")
-    private String status;
-    @Column(name = "installment")
-    private String installment;
     @Column(name = "description")
     private String description;
-    @Column(name = "productImage", columnDefinition = "LONGBLOB")
-    private byte [] productImage;
+    @Column(name = "url_image")
+    private String photoUrl;
     // Các quan hệ mapping
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name="product_brand",
-            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
-           inverseJoinColumns = @JoinColumn(name = "brand_id", referencedColumnName = "id"))
-    @JsonIgnore
-    private List<Brand> brands;
+//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JoinTable(name="product_brand",
+//            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
+//           inverseJoinColumns = @JoinColumn(name = "brand_id", referencedColumnName = "id"))
+//    @JsonIgnore
+//    private List<Brand> brands;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonIgnore
-    private List<Category> categories;
-
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> productVariants;
     public Product() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
     public String getProductName() {
@@ -64,54 +60,6 @@ public class Product {
         this.productName = productName;
     }
 
-    public double getPricePrevious() {
-        return pricePrevious;
-    }
-
-    public void setPricePrevious(double pricePrevious) {
-        this.pricePrevious = pricePrevious;
-    }
-
-    public double getPriceCurrent() {
-        return priceCurrent;
-    }
-
-    public void setPriceCurrent(double priceCurrent) {
-        this.priceCurrent = priceCurrent;
-    }
-
-    public String getDiscountPercent() {
-        return discountPercent;
-    }
-
-    public void setDiscountPercent(String discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getInstallment() {
-        return installment;
-    }
-
-    public void setInstallment(String installment) {
-        this.installment = installment;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -120,27 +68,36 @@ public class Product {
         this.description = description;
     }
 
-    public byte[] getProductImage() {
-        return productImage;
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
-    public void setProductImage(byte[] productImage) {
-        this.productImage = productImage;
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
-    public List<Brand> getBrands() {
-        return brands;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setBrands(List<Brand> brands) {
-        this.brands = brands;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public List<ProductVariant> getProductVariants() {
+        return productVariants;
     }
 
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
+    public void setProductVariants(List<ProductVariant> productVariants) {
+        this.productVariants = productVariants;
     }
+    //    public List<Brand> getBrands() {
+//        return brands;
+//    }
+//
+//    public void setBrands(List<Brand> brands) {
+//        this.brands = brands;
+//    }
+
+
 }

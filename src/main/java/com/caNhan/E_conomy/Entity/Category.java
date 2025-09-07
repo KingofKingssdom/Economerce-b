@@ -10,17 +10,9 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @Column(name = "categoryName")
+    private Long id;
+    @Column(name = "category_name")
     private String categoryName;
-    // Cac mapping
-    @ManyToMany(cascade = CascadeType.ALL,mappedBy = "categories")
-    @JsonIgnore
-    private List<Brand> brands;
-    @ManyToMany(mappedBy = "categories")
-    @JsonIgnore
-    private List<Product> products;
-
 
     public Category() {
     }
@@ -29,11 +21,11 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -45,19 +37,5 @@ public class Category {
         this.categoryName = categoryName;
     }
 
-    public List<Brand> getBrands() {
-        return brands;
-    }
 
-    public void setBrands(List<Brand> brands) {
-        this.brands = brands;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
 }

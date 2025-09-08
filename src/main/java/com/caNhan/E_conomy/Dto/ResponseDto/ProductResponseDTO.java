@@ -12,6 +12,7 @@ public class ProductResponseDTO {
     private String urlPhoto;
     private Long categoryId;
     private List<ProductVariantResponseDTO> productVariants;
+    private List<ProductSpecificationResponseDTO> specifications;
 
     public ProductResponseDTO() {
     }
@@ -70,5 +71,13 @@ public class ProductResponseDTO {
 
     public void setProductVariants(List<ProductVariantResponseDTO> productVariants) {
         this.productVariants = productVariants;
+    }
+
+    public List<ProductSpecificationResponseDTO> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(List<ProductSpecificationResponseDTO> specifications) {
+        this.specifications = specifications;
     }
 }

@@ -33,6 +33,8 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy = "product")
     private List<ProductVariant> productVariants;
+    @ManyToMany(mappedBy = "products")
+    private List<ProductSpecification> specifications;
     public Product() {
     }
 
@@ -90,6 +92,14 @@ public class Product {
 
     public void setProductVariants(List<ProductVariant> productVariants) {
         this.productVariants = productVariants;
+    }
+
+    public List<ProductSpecification> getSpecifications() {
+        return specifications;
+    }
+
+    public void setSpecifications(List<ProductSpecification> specifications) {
+        this.specifications = specifications;
     }
     //    public List<Brand> getBrands() {
 //        return brands;

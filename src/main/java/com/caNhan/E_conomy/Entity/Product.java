@@ -1,9 +1,7 @@
 package com.caNhan.E_conomy.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -32,9 +30,11 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
     @OneToMany(mappedBy = "product")
-    private List<ProductVariant> productVariants;
+    private List<ProductColor> productColors;
     @ManyToMany(mappedBy = "products")
     private List<ProductSpecification> specifications;
+    @OneToMany(mappedBy = "product")
+    private List<ProductVariant> productVariants;
     public Product() {
     }
 
@@ -86,12 +86,12 @@ public class Product {
         this.category = category;
     }
 
-    public List<ProductVariant> getProductVariants() {
-        return productVariants;
+    public List<ProductColor> getProductColors() {
+        return productColors;
     }
 
-    public void setProductVariants(List<ProductVariant> productVariants) {
-        this.productVariants = productVariants;
+    public void setProductColors(List<ProductColor> productColors) {
+        this.productColors = productColors;
     }
 
     public List<ProductSpecification> getSpecifications() {
@@ -100,6 +100,14 @@ public class Product {
 
     public void setSpecifications(List<ProductSpecification> specifications) {
         this.specifications = specifications;
+    }
+
+    public List<ProductVariant> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(List<ProductVariant> productVariants) {
+        this.productVariants = productVariants;
     }
     //    public List<Brand> getBrands() {
 //        return brands;

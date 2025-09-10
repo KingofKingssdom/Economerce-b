@@ -1,14 +1,14 @@
-package com.caNhan.E_conomy.Dto.ResponseDto;
+package com.caNhan.E_conomy.Dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class ProductVariantResponseDTO {
+public class ProductColorDTO {
     private Long id;
-    private String urlPhoto;
+    private MultipartFile urlPhoto;
     private String titleVariant;
     private Long productId;
 
-    public ProductVariantResponseDTO() {
+    public ProductColorDTO() {
     }
 
     public Long getId() {
@@ -19,11 +19,11 @@ public class ProductVariantResponseDTO {
         this.id = id;
     }
 
-    public String getUrlPhoto() {
+    public MultipartFile getUrlPhoto() {
         return urlPhoto;
     }
 
-    public void setUrlPhoto(String urlPhoto) {
+    public void setUrlPhoto(MultipartFile urlPhoto) {
         this.urlPhoto = urlPhoto;
     }
 

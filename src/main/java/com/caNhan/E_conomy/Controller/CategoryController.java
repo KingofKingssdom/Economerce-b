@@ -31,7 +31,7 @@ public class CategoryController {
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/search/all")
     private ResponseEntity<ResponseData<?>> getAllCategory () {
        List<Category> categories = categoryService.readAll();
         ResponseData responseData = new ResponseData(
@@ -51,4 +51,15 @@ public class CategoryController {
                 category);
         return  ResponseEntity.ok(responseData);
     }
+    @GetMapping("/search")
+    private ResponseEntity<?> searchById(@RequestParam(name = "categoryId") Long categoryId){
+        Category category = categoryService.readById(categoryId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy danh mục theo id thành công",
+                category
+        );
+        return ResponseEntity.ok(responseData);
+    }
+
 }

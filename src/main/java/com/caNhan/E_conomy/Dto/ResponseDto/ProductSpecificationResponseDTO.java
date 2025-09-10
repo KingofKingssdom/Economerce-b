@@ -4,10 +4,12 @@ import com.caNhan.E_conomy.Dto.SpecificationDetailDTO;
 import com.caNhan.E_conomy.Entity.SpecificationDetail;
 import com.caNhan.E_conomy.Service.SpecificationDetailService;
 
+import java.util.List;
+
 public class ProductSpecificationResponseDTO {
     private Long id;
     private String nameSpecification;
-    private SpecificationDetail specificationDetail;
+    private List<SpecificationDetailDTO> specificationDetails;
     public ProductSpecificationResponseDTO() {
     }
 
@@ -27,11 +29,11 @@ public class ProductSpecificationResponseDTO {
         this.nameSpecification = nameSpecification;
     }
 
-    public SpecificationDetail getSpecificationDetail() {
-        return specificationDetail;
+    public List<SpecificationDetailDTO> getSpecificationDetails() {
+        return specificationDetails;
     }
 
-    public void setSpecificationDetail(SpecificationDetail specificationDetail) {
-        this.specificationDetail = specificationDetail;
+    public void setSpecificationDetails(List<SpecificationDetailDTO> specificationDetails) {
+        this.specificationDetails = specificationDetails;
     }
 }

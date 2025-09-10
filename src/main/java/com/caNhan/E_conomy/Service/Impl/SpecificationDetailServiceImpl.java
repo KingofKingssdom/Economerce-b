@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SpecificationDetailImpl implements SpecificationDetailService {
+public class SpecificationDetailServiceImpl implements SpecificationDetailService {
     private SpecificationDetailRepository specificationDetailRepository;
     private ProductSpecificationRepository productSpecificationRepository;
     private ModelMapper modelMapper;
     @Autowired
-    public SpecificationDetailImpl(
+    public SpecificationDetailServiceImpl(
             SpecificationDetailRepository specificationDetailRepository,
             ProductSpecificationRepository productSpecificationRepository,
             ModelMapper modelMapper) {

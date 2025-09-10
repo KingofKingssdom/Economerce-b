@@ -1,6 +1,5 @@
 package com.caNhan.E_conomy.Dto;
 
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductVariantResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 public class ProductDTO {

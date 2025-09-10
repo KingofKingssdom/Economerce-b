@@ -43,4 +43,20 @@ public class CategoryServiceImpl implements CategoryService {
            return categoryRepository.save(category);
         }
     }
+
+    @Override
+    public Category readById(Long categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if(categoryOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Không tìm thấy danh mục theo id = " + categoryId);
+        }
+        else {
+            return categoryOptional.get();
+        }
+    }
+
+    @Override
+    public Category deleteById(Long categoryId) {
+        return null;
+    }
 }

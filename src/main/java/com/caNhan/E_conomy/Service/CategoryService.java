@@ -9,4 +9,6 @@ public interface CategoryService {
     Category create(CategoryDTO categoryDto);
     List<Category> readAll();
     Category update(Long categoryId, CategoryDTO categoryDto);
+    Category readById(Long categoryId);
+    Category deleteById(Long categoryId);
 }

@@ -1,6 +1,7 @@
 package com.caNhan.E_conomy.Service.Impl;
 
 import com.caNhan.E_conomy.Dto.ProductDTO;
+import com.caNhan.E_conomy.Dto.ProductVariantDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductResponseDTO;
 import com.caNhan.E_conomy.Entity.Category;
 import com.caNhan.E_conomy.Entity.Product;
@@ -14,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,10 +63,60 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponseDTO> readAll() {
         return productRepository.findAll()
                 .stream()
-                .map(product -> modelMapper.map(product, ProductResponseDTO.class))
-                .toList();
+                .map(product -> {
+                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+
+                    if (product.getProductVariants() != null) {
+                        dto.setProductVariants(
+                                product.getProductVariants().stream()
+                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                        .toList()
+                        );
+                    }
+
+                    return dto;
+                })
+                .toList();}
+
+    @Override
+    public ProductResponseDTO readById(Long productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+       ProductDTO productDTO;
+        if(productOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id = " + productId);
+
+        }
+        else {
+            return modelMapper.map(productOptional.get(), ProductResponseDTO.class) ;
+        }
+
     }
 
+    @Override
+    public ProductResponseDTO update(Long productId, ProductDTO productDTO) {
+        try{
+            Optional<Product> productOptional = productRepository.findById(productId);
+            Product product;
+            if(productOptional.isEmpty()){
+                throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id = " + productId);
+            }
+            else {
+                Optional<Category> category = categoryRepository.findById(productDTO.getCategoryId());
+                String productPath = FileStorageUtil.storeFile("Product",productDTO.getUrlPhoto());
+                product = new Product();
+                product.setProductCode(productDTO.getProductCode());
+                product.setProductName(productDTO.getProductName());
+                product.setDescription(productDTO.getDescription());
+                product.setPhotoUrl(FileStorageUtil.fullUrl(productPath));
+                product.setCategory(category.get());
+            }
+            Product updateProduct = productRepository.save(product);
+            return modelMapper.map(updateProduct,ProductResponseDTO.class);
+        }
+        catch (IOException e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
 //    public Product saveProduct (Product product, MultipartFile file, List<Integer> categoryIds, List<Integer> brandIds) throws Exception {
 //        if(!file.isEmpty()){

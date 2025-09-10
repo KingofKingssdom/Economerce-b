@@ -1,38 +1,36 @@
 package com.caNhan.E_conomy.Dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class ProductVariantDTO {
-    private Long id;
-    private MultipartFile urlPhoto;
-    private String titleVariant;
+    private String storage;
+    private double priceOrigin;
+    private double priceDiscount;
     private Long productId;
 
     public ProductVariantDTO() {
     }
 
-    public Long getId() {
-        return id;
+    public String getStorage() {
+        return storage;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setStorage(String storage) {
+        this.storage = storage;
     }
 
-    public MultipartFile getUrlPhoto() {
-        return urlPhoto;
+    public double getPriceOrigin() {
+        return priceOrigin;
     }
 
-    public void setUrlPhoto(MultipartFile urlPhoto) {
-        this.urlPhoto = urlPhoto;
+    public void setPriceOrigin(double priceOrigin) {
+        this.priceOrigin = priceOrigin;
     }
 
-    public String getTitleVariant() {
-        return titleVariant;
+    public double getPriceDiscount() {
+        return priceDiscount;
     }
 
-    public void setTitleVariant(String titleVariant) {
-        this.titleVariant = titleVariant;
+    public void setPriceDiscount(double priceDiscount) {
+        this.priceDiscount = priceDiscount;
     }
 
     public Long getProductId() {

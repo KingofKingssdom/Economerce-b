@@ -8,10 +8,11 @@ public class ProductVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String urlPhoto;
-    private String titleVariant;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private String storage;
+    private double priceOrigin;
+    private double priceDiscount;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
     public ProductVariant() {
     }
@@ -24,20 +25,28 @@ public class ProductVariant {
         this.id = id;
     }
 
-    public String getUrlPhoto() {
-        return urlPhoto;
+    public String getStorage() {
+        return storage;
     }
 
-    public void setUrlPhoto(String urlPhoto) {
-        this.urlPhoto = urlPhoto;
+    public void setStorage(String storage) {
+        this.storage = storage;
     }
 
-    public String getTitleVariant() {
-        return titleVariant;
+    public double getPriceOrigin() {
+        return priceOrigin;
     }
 
-    public void setTitleVariant(String titleVariant) {
-        this.titleVariant = titleVariant;
+    public void setPriceOrigin(double priceOrigin) {
+        this.priceOrigin = priceOrigin;
+    }
+
+    public double getPriceDiscount() {
+        return priceDiscount;
+    }
+
+    public void setPriceDiscount(double priceDiscount) {
+        this.priceDiscount = priceDiscount;
     }
 
     public Product getProduct() {
@@ -48,4 +57,3 @@ public class ProductVariant {
         this.product = product;
     }
 }
-

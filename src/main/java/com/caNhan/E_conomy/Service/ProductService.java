@@ -10,4 +10,7 @@ import java.util.List;
 public interface ProductService {
   Product create(ProductDTO productDto);
   List<ProductResponseDTO> readAll();
+  ProductResponseDTO readById(Long productId);
+  ProductResponseDTO update(Long productId, ProductDTO productDTO);
+
 }

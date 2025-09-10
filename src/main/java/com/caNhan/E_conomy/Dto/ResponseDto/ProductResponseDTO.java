@@ -1,6 +1,7 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.caNhan.E_conomy.Dto.ProductVariantDTO;
+import com.caNhan.E_conomy.Entity.ProductVariant;
 
 import java.util.List;
 
@@ -11,8 +12,9 @@ public class ProductResponseDTO {
     private String description;
     private String urlPhoto;
     private Long categoryId;
-    private List<ProductVariantResponseDTO> productVariants;
+    private List<ProductColorResponseDTO> productColors;
     private List<ProductSpecificationResponseDTO> specifications;
+    private List<ProductVariantDTO> productVariants;
 
     public ProductResponseDTO() {
     }
@@ -65,12 +67,12 @@ public class ProductResponseDTO {
         this.categoryId = categoryId;
     }
 
-    public List<ProductVariantResponseDTO> getProductVariants() {
-        return productVariants;
+    public List<ProductColorResponseDTO> getProductColors() {
+        return productColors;
     }
 
-    public void setProductVariants(List<ProductVariantResponseDTO> productVariants) {
-        this.productVariants = productVariants;
+    public void setProductColors(List<ProductColorResponseDTO> productColors) {
+        this.productColors = productColors;
     }
 
     public List<ProductSpecificationResponseDTO> getSpecifications() {
@@ -79,5 +81,13 @@ public class ProductResponseDTO {
 
     public void setSpecifications(List<ProductSpecificationResponseDTO> specifications) {
         this.specifications = specifications;
+    }
+
+    public List<ProductVariantDTO> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(List<ProductVariantDTO> productVariants) {
+        this.productVariants = productVariants;
     }
 }

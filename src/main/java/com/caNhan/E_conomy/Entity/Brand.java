@@ -20,16 +20,13 @@ public class Brand {
     @ManyToMany (cascade = CascadeType.ALL)
     @JoinTable(
             name = "Brand_Category",
-            joinColumns = @JoinColumn(name = "brand_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "brand_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
 
-//    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "brands")
-//    @JsonIgnore
-//    private List<Product> products;
-//    public Brand() {
-//    }
+    public Brand() {
+    }
 
     public Long getId() {
         return id;
@@ -63,11 +60,4 @@ public class Brand {
         this.categories = categories;
     }
 
-//    public List<Product> getProducts() {
-//        return products;
-//    }
-//
-//    public void setProducts(List<Product> products) {
-//        this.products = products;
-//    }
 }

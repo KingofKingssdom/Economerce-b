@@ -16,19 +16,21 @@ public class Product {
     private String productName;
     @Column(name = "description")
     private String description;
-    @Column(name = "url_image")
+    @Column(name = "url_image_product")
     private String photoUrl;
+    @Column(name = "featured_product")
+    private boolean featured;
+    @Column(name = "promotional_product")
+    private boolean promotional;
     // Các quan hệ mapping
-//    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(name="product_brand",
-//            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
-//           inverseJoinColumns = @JoinColumn(name = "brand_id", referencedColumnName = "id"))
-//    @JsonIgnore
-//    private List<Brand> brands;
+
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
     @OneToMany(mappedBy = "product")
     private List<ProductColor> productColors;
     @ManyToMany(mappedBy = "products")
@@ -109,13 +111,28 @@ public class Product {
     public void setProductVariants(List<ProductVariant> productVariants) {
         this.productVariants = productVariants;
     }
-    //    public List<Brand> getBrands() {
-//        return brands;
-//    }
-//
-//    public void setBrands(List<Brand> brands) {
-//        this.brands = brands;
-//    }
 
+    public Brand getBrand() {
+        return brand;
+    }
 
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public boolean isPromotional() {
+        return promotional;
+    }
+
+    public void setPromotional(boolean promotional) {
+        this.promotional = promotional;
+    }
 }

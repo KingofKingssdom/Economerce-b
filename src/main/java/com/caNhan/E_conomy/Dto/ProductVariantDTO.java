@@ -1,12 +1,21 @@
 package com.caNhan.E_conomy.Dto;
 
 public class ProductVariantDTO {
+    private Long id;
     private String storage;
     private double priceOrigin;
     private double priceDiscount;
     private Long productId;
 
     public ProductVariantDTO() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getStorage() {

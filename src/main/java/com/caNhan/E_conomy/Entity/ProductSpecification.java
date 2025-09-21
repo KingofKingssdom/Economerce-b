@@ -14,8 +14,8 @@ public class ProductSpecification {
     private String nameSpecification;
     @ManyToMany
     @JoinTable(
-            name = "product_specification_mapping",
-            joinColumns = @JoinColumn(name = "specification_id"),
+            name = "product_product_specification",
+            joinColumns = @JoinColumn(name = "product_specification_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Product> products;

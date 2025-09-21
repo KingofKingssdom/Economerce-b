@@ -2,7 +2,9 @@ package com.caNhan.E_conomy.Service.Impl;
 
 import com.caNhan.E_conomy.Dto.ProductDTO;
 import com.caNhan.E_conomy.Dto.ProductVariantDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductResponseDTO;
+import com.caNhan.E_conomy.Entity.Brand;
 import com.caNhan.E_conomy.Entity.Category;
 import com.caNhan.E_conomy.Entity.Product;
 import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
@@ -13,6 +15,9 @@ import com.caNhan.E_conomy.Service.ProductService;
 import com.caNhan.E_conomy.Util.FileStorageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,12 +40,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product create(ProductDTO productDto) {
+    public ProductResponseDTO create(ProductDTO productDto) {
         try{
-            Optional<Category> category = categoryRepository.findById(productDto.getCategoryId());
+            Optional<Category> categoryOptional = categoryRepository.findById(productDto.getCategoryId());
+            Optional<Brand> brandOptional = brandRepository.findById(productDto.getBrandId());
             Product product;
-            if(category.isEmpty()){
-                throw new NoSuchCustomerExistsException("Không tạo được sản phẩm với danh mục Id = " + productDto.getCategoryId());
+            if(categoryOptional.isEmpty() && brandOptional.isEmpty()){
+                throw new NoSuchCustomerExistsException("Không tạo được sản phẩm với danh mục Id = " + productDto.getCategoryId()
+                                                        + " Id brand = " + productDto.getBrandId());
             }
             else{
                 String productPath = FileStorageUtil.storeFile("Product",productDto.getUrlPhoto());
@@ -49,9 +56,13 @@ public class ProductServiceImpl implements ProductService {
                 product.setProductName(productDto.getProductName());
                 product.setDescription(productDto.getDescription());
                 product.setPhotoUrl(FileStorageUtil.fullUrl(productPath));
-                product.setCategory(category.get());
+                product.setFeatured(productDto.isFeatured());
+                product.setPromotional(productDto.isPromotional());
+                product.setCategory(categoryOptional.get());
+                product.setBrand(brandOptional.get());
             }
-            return  productRepository.save(product);
+            Product saveProduct =  productRepository.save(product);
+            return modelMapper.map(saveProduct,ProductResponseDTO.class);
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -60,23 +71,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDTO> readAll() {
-        return productRepository.findAll()
-                .stream()
-                .map(product -> {
-                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+    public Page<ProductResponseDTO> readAll(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize); // dùng pageNumber, pageSize truyền vào
+        Page<Product> products = productRepository.findAll(pageable);
 
-                    if (product.getProductVariants() != null) {
-                        dto.setProductVariants(
-                                product.getProductVariants().stream()
-                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
-                                        .toList()
-                        );
-                    }
+        return products.map(product -> {
+            ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
 
-                    return dto;
-                })
-                .toList();}
+            if (product.getProductVariants() != null) {
+                dto.setProductVariants(
+                        product.getProductVariants().stream()
+                                .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                .toList()
+                );
+            }
+
+            return dto;
+        });}
 
     @Override
     public ProductResponseDTO readById(Long productId) {
@@ -107,6 +118,8 @@ public class ProductServiceImpl implements ProductService {
                 product.setProductCode(productDTO.getProductCode());
                 product.setProductName(productDTO.getProductName());
                 product.setDescription(productDTO.getDescription());
+                product.setFeatured(productDTO.isFeatured());
+                product.setPromotional(productDTO.isPromotional());
                 product.setPhotoUrl(FileStorageUtil.fullUrl(productPath));
                 product.setCategory(category.get());
             }
@@ -118,55 +131,64 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-//    public Product saveProduct (Product product, MultipartFile file, List<Integer> categoryIds, List<Integer> brandIds) throws Exception {
-//        if(!file.isEmpty()){
-//            product.setProductImage(file.getBytes());
-//        }
-//        List<Category> categories = new ArrayList<>();
-//        for(Integer categoryId: categoryIds){
-//            Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
-//            categories.add(categoryOptional.get());
-//        }
-//        List<Brand> brands = new ArrayList<>();
-//        for(Integer brandId: brandIds){
-//            Optional<Brand> brandOptional = brandRepository.findById(brandId);
-//            brands.add(brandOptional.get());
-//        }
-//        product.setCategories(categories);
-//        product.setBrands(brands);
-//        return productRepository.save(product);
-//    }
+    @Override
+    public Page<ProductResponseDTO> readByCategory(Long categoryId, int pageNumber, int pageSize) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if(categoryOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id danh mục = " + categoryId);
+        }
+        else {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<Product> products = productRepository.findByCategoryId(categoryId,pageable);
+            return products.map(product -> {
+                        ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
 
-//    public Product findProductById (int id) {
-//        return productRepository.findById(id).orElseThrow();
-//    }
-//    public List<Product> findAllProduct () {
-//        return productRepository.findAll();
-//    }
-//    public List<Product> findProductByCategoryId(Integer categoryId) {
-//        return productRepository.findByCategories_Id(categoryId);
-//    }
-//    public void deleteProduct (Product product) {
-//        productRepository.delete(product);
-//    }
-//    // Truy van san pham theo danh muc va sap xep tu lon den thap theo gia
-//    public List<Product> findProductByPriceWithCategory_IdDesc (Integer categoryId) {
-//        return productRepository.findProductByPriceCurrentAndCategories_IdDesc(categoryId);
-//    }
-//    public List<Product> findProductByCategory_IdWithPriceAsc (Integer categoryId){
-//        return  productRepository.findProductByCategories_IdWithPriceCurrentAsc(categoryId);
-//    }
-////     Truy van san pham theo danh muc voi brand va sap xep tu nho den lon theo gia
-//    public List<Product> findProductByCategoryIdAndBrandIdWithPriceSortDesc (Integer categoryId, Integer brandId) {
-//        return productRepository.findProductByCategories_IdAndBrandIdWithPriceSortDesc(categoryId, brandId);
-//    }
-//    public List<Product> findProductByCategoryIdAndBrandIdWithPriceSortAsc (Integer categoryId, Integer brandId) {
-//        return productRepository.findProductByCategories_IdAndBrandIdWithPriceSortAsc(categoryId, brandId);
-//    }
-//    // lay toan bo san pham theo danh muc va brand
-//    public List<Product> findProductByCategoryIdAndBrandId(Integer categoryId, Integer brandId){
-//        return  productRepository.findProductByCategoriesIdAndBrandId(categoryId,brandId);
-//    }
+                        if (product.getProductVariants() != null) {
+                            dto.setProductVariants(
+                                    product.getProductVariants().stream()
+                                            .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                            .toList()
+                            );
+                        }
+                        return dto;});
+        }
+    }
 
+    @Override
+    public Page<ProductResponseDTO> readByCategoryAndBrand(Long categoryId, Long brandId, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Product> products = productRepository.findByCategoryAndBrand(categoryId, brandId, pageable);
+        return products.map(product -> {
+                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
 
+                    if (product.getProductVariants() != null) {
+                        dto.setProductVariants(
+                                product.getProductVariants().stream()
+                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                        .toList()
+                        );
+                    }
+
+                    return dto;
+                });
+    }
+
+    @Override
+    public List<ProductResponseDTO> readAllByFeatured(boolean featured) {
+        List<Product> products = productRepository.findAllByFeatured(featured);
+
+        return products.stream()
+                .map(product -> {
+            ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+
+            if (product.getProductVariants() != null) {
+                dto.setProductVariants(
+                        product.getProductVariants().stream()
+                                .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                .toList()
+                );
+            }
+            return dto;})
+                .toList();
+    }
 }

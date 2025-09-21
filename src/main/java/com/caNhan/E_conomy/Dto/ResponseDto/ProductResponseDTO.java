@@ -10,12 +10,14 @@ public class ProductResponseDTO {
     private String productCode;
     private String productName;
     private String description;
-    private String urlPhoto;
+    private String urlPhotoProduct;
     private Long categoryId;
     private List<ProductColorResponseDTO> productColors;
     private List<ProductSpecificationResponseDTO> specifications;
     private List<ProductVariantDTO> productVariants;
-
+    private Long brandId;
+    private boolean featured;
+    private boolean promotional;
     public ProductResponseDTO() {
     }
 
@@ -51,12 +53,12 @@ public class ProductResponseDTO {
         this.description = description;
     }
 
-    public String getUrlPhoto() {
-        return urlPhoto;
+    public String getUrlPhotoProduct() {
+        return urlPhotoProduct;
     }
 
-    public void setUrlPhoto(String urlPhoto) {
-        this.urlPhoto = urlPhoto;
+    public void setUrlPhotoProduct(String urlPhotoProduct) {
+        this.urlPhotoProduct = urlPhotoProduct;
     }
 
     public Long getCategoryId() {
@@ -89,5 +91,29 @@ public class ProductResponseDTO {
 
     public void setProductVariants(List<ProductVariantDTO> productVariants) {
         this.productVariants = productVariants;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public boolean isPromotional() {
+        return promotional;
+    }
+
+    public void setPromotional(boolean promotional) {
+        this.promotional = promotional;
     }
 }

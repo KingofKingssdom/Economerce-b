@@ -22,16 +22,16 @@ public class BrandController {
 
     }
     @PostMapping("/create")
-    public ResponseEntity<ResponseData<Brand>> addBrand (@ModelAttribute BrandDTO brandDTO) {
+    public ResponseEntity<?> addBrand (@ModelAttribute BrandDTO brandDTO) {
         Brand brand = brandService.create(brandDTO);
-        ResponseData<Brand> responseData = new ResponseData<>(
+        ResponseData responseData = new ResponseData<>(
                 HttpStatus.OK.value(),
                 "Tạo nhãn hieu thành công",
                 brand);
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/get/all")
     private ResponseEntity<?> getAllBrand () {
         List<Brand> brand = brandService.realAll();
         ResponseData responseData = new ResponseData(
@@ -41,37 +41,17 @@ public class BrandController {
         );
         return  ResponseEntity.ok(responseData);
     }
-//    @GetMapping("{id}")
-//    public ResponseEntity<Brand> getBrandById(@PathVariable int id){
-//        Brand brand = brandService.findBrandById(id);
-//        return ResponseEntity.ok(brand);
-//    }
-//
-//    @GetMapping("/category")
-//    public ResponseEntity<?> getByCategoryId(@RequestParam(value = "categoryId") Integer categoryId){
-//        List<Brand> brands = brandService.findBrandByCategoryId(categoryId);
-//        return ResponseEntity.ok(brands);
-//    }
-//
-//
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<?> updateBrandById(@PathVariable int id,
-//                                             @RequestParam (value = "brandName") String brandName,
-//                                             @RequestParam (value = "imageBrand", required = false) MultipartFile imageBrand,
-//                                             @RequestParam (value = "categoryIds", required = false) List<Integer> categoryIds) throws Exception {
-//        try {
-//           Brand brand = brandService.findBrandById(id);
-//           if(brand != null){
-//               brand.setBrandName(brandName);
-//
-//           }
-//           Brand addBrand = brandService.saveBrand(brand,imageBrand,categoryIds);
-//            return ResponseEntity.ok(addBrand);
-//        }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return ResponseEntity.badRequest().build();
-//    }
+
+    @GetMapping("/get/category")
+    private ResponseEntity<?> getBrandByCategory(@RequestParam(name = "categoryId") Long categoryId) {
+        List<Brand> brands = brandService.readByCategoryId(categoryId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy nhãn hàng theo danh mục thành công",
+                brands
+        );
+        return ResponseEntity.ok(responseData);
+    }
+
 
 }

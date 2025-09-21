@@ -9,6 +9,9 @@ public class ProductDTO {
     private String description;
     private MultipartFile urlPhoto;
     private Long categoryId;
+    private Long brandId;
+    private boolean featured;
+    private boolean promotional;
     public ProductDTO() {
     }
 
@@ -58,5 +61,29 @@ public class ProductDTO {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public boolean isPromotional() {
+        return promotional;
+    }
+
+    public void setPromotional(boolean promotional) {
+        this.promotional = promotional;
     }
 }

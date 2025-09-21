@@ -1,15 +1,16 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.ResponseDto;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public class BrandDTO {
+public class BrandResponseDTO {
     private Long id;
     private String brandName;
-    private MultipartFile urlImageBrand;
+    private String urlImageBrand;
     private List<Long> categoryId;
-    public BrandDTO() {
+
+    public BrandResponseDTO() {
     }
 
     public Long getId() {
@@ -27,12 +28,11 @@ public class BrandDTO {
     public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
-
-    public MultipartFile getUrlImageBrand() {
+    public String getUrlImageBrand() {
         return urlImageBrand;
     }
 
-    public void setUrlImageBrand(MultipartFile urlImageBrand) {
+    public void setUrlImageBrand(String urlImageBrand) {
         this.urlImageBrand = urlImageBrand;
     }
 

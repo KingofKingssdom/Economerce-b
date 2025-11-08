@@ -36,7 +36,7 @@ public class CategoryController {
        List<Category> categories = categoryService.readAll();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Tạo danh mục thành công",
+                "Lấy toàn bộ mục thành công",
                 categories);
         return ResponseEntity.ok(responseData);
     }

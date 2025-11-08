@@ -4,6 +4,7 @@ import com.caNhan.E_conomy.Dto.BrandDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.BrandResponseDTO;
 import com.caNhan.E_conomy.Entity.Brand;
 import com.caNhan.E_conomy.Entity.Category;
+import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
 import com.caNhan.E_conomy.Repository.BrandRepository;
 import com.caNhan.E_conomy.Repository.CategoryRepository;
 import com.caNhan.E_conomy.Service.BrandService;
@@ -40,7 +41,7 @@ public class BrandServiceImpl implements BrandService {
                 String brandBath = FileStorageUtil.storeFile("Brand", brandDTO.getUrlImageBrand());
                  brand = new Brand();
                 brand.setBrandName(brandDTO.getBrandName());
-                brand.setUrlImageBrand(FileStorageUtil.fullUrl(brandBath));
+                brand.setUrlImageBrand(brandBath);
                 brand.setCategories(new ArrayList<>());
             }
             List<Category> categories = categoryRepository.findAllById(brandDTO.getCategoryId());
@@ -60,6 +61,30 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public List<Brand> readByCategoryId(Long categoryId) {
         return brandRepository.findBrandByCategories(categoryId);
+    }
+
+    @Override
+    public Brand update(Long brandId, BrandDTO brandDTO) {
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new NoSuchCustomerExistsException("Không tìm thấy nhãn hiệu với id " + brandId));
+
+        try {
+
+            brand.setBrandName(brandDTO.getBrandName());
+
+
+            if (brandDTO.getUrlImageBrand() != null && !brandDTO.getUrlImageBrand().isEmpty()) {
+                String brandPath = FileStorageUtil.storeFile("Brand", brandDTO.getUrlImageBrand());
+                brand.setUrlImageBrand(brandPath);
+            }
+
+            List<Category> categories = categoryRepository.findAllById(brandDTO.getCategoryId());
+            brand.setCategories(categories);
+
+            return brandRepository.save(brand);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi cập nhật brand: " + e.getMessage());
+        }
     }
 
 }

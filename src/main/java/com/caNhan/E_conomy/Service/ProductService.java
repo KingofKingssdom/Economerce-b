@@ -17,4 +17,5 @@ public interface ProductService {
   Page<ProductResponseDTO> readByCategory(Long categoryId, int pageNumber, int pageSize);
   Page<ProductResponseDTO> readByCategoryAndBrand(Long categoryId, Long brandId, int pageNumber, int pageSize);
   List<ProductResponseDTO> readAllByFeatured(boolean featured);
+  List<ProductResponseDTO> readByProductName(String productName);
 }

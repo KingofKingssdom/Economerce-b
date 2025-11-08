@@ -8,6 +8,11 @@ public class ResponseData<T>{
     public ResponseData() {
     }
 
+    public ResponseData(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
     public ResponseData(int status, String message, T data) {
         this.status = status;
         this.message = message;

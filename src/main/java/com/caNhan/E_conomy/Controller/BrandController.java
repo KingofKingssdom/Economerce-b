@@ -31,12 +31,12 @@ public class BrandController {
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/get/all")
+    @GetMapping("/search/all")
     private ResponseEntity<?> getAllBrand () {
         List<Brand> brand = brandService.realAll();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy nhãn hiệu thành công",
+                "Lấy toàn bộ nhãn hiệu thành công",
                 brand
         );
         return  ResponseEntity.ok(responseData);
@@ -51,6 +51,18 @@ public class BrandController {
                 brands
         );
         return ResponseEntity.ok(responseData);
+    }
+
+    @PutMapping("/update")
+    private ResponseEntity<?> updateBrand(@RequestParam(name = "brandId") Long brandId,
+                                          @ModelAttribute BrandDTO brandDTO){
+        Brand brand = brandService.update(brandId, brandDTO);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Cập nhập nhãn hiệu thành công",
+                brand
+        );
+        return ResponseEntity.ok(brand);
     }
 
 

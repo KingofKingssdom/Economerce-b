@@ -22,6 +22,8 @@ public class Product {
     private boolean featured;
     @Column(name = "promotional_product")
     private boolean promotional;
+    @Column(name = "quantity")
+    private int quantityProduct;
     // Các quan hệ mapping
 
 
@@ -134,5 +136,13 @@ public class Product {
 
     public void setPromotional(boolean promotional) {
         this.promotional = promotional;
+    }
+
+    public int getQuantityProduct() {
+        return quantityProduct;
+    }
+
+    public void setQuantityProduct(int quantityProduct) {
+        this.quantityProduct = quantityProduct;
     }
 }

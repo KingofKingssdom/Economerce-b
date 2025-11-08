@@ -1,5 +1,6 @@
 package com.caNhan.E_conomy;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class EConomyApplication {
 
 	public static void main(String[] args) {
+		Dotenv dotenv = Dotenv.configure()
+				.directory("./") // thư mục chứa .env
+				.ignoreIfMissing()
+				.load();
 		SpringApplication.run(EConomyApplication.class, args);
+
 	}
 
 	@Bean

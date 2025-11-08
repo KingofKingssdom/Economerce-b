@@ -42,7 +42,7 @@ public class ProductColorServiceImpl implements ProductColorService {
                 String productColorPath = FileStorageUtil.storeFile("productColor",productColorDTO.getUrlPhoto());
                 productColor = new ProductColor();
                 productColor.setTitleVariant(productColorDTO.getTitleVariant());
-                productColor.setUrlPhoto(FileStorageUtil.fullUrl(productColorPath));
+                productColor.setUrlPhoto(productColorPath);
                 productColor.setProduct(productId.get());
                 ProductColor saveProductColor = productColorRepository.save(productColor) ;
                 return modelMapper.map(saveProductColor, ProductColorResponseDTO.class);

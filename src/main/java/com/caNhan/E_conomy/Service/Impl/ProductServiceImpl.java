@@ -55,9 +55,10 @@ public class ProductServiceImpl implements ProductService {
                 product.setProductCode(productDto.getProductCode());
                 product.setProductName(productDto.getProductName());
                 product.setDescription(productDto.getDescription());
-                product.setPhotoUrl(FileStorageUtil.fullUrl(productPath));
+                product.setPhotoUrl(productPath);
                 product.setFeatured(productDto.isFeatured());
                 product.setPromotional(productDto.isPromotional());
+                product.setQuantityProduct(productDto.getQuantityProduct());
                 product.setCategory(categoryOptional.get());
                 product.setBrand(brandOptional.get());
             }
@@ -88,6 +89,7 @@ public class ProductServiceImpl implements ProductService {
 
             return dto;
         });}
+
 
     @Override
     public ProductResponseDTO readById(Long productId) {
@@ -120,7 +122,8 @@ public class ProductServiceImpl implements ProductService {
                 product.setDescription(productDTO.getDescription());
                 product.setFeatured(productDTO.isFeatured());
                 product.setPromotional(productDTO.isPromotional());
-                product.setPhotoUrl(FileStorageUtil.fullUrl(productPath));
+                product.setPhotoUrl(productPath);
+                product.setQuantityProduct(productDTO.getQuantityProduct());
                 product.setCategory(category.get());
             }
             Product updateProduct = productRepository.save(product);
@@ -189,6 +192,24 @@ public class ProductServiceImpl implements ProductService {
                 );
             }
             return dto;})
+                .toList();
+    }
+
+    @Override
+    public List<ProductResponseDTO> readByProductName(String productName) {
+        List<Product> products = productRepository.findAllByProductName(productName);
+        return products.stream()
+                .map(product -> {
+                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+
+                    if (product.getProductVariants() != null) {
+                        dto.setProductVariants(
+                                product.getProductVariants().stream()
+                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                        .toList()
+                        );
+                    }
+                    return dto;})
                 .toList();
     }
 }

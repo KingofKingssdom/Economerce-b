@@ -1,38 +1,40 @@
-//package com.caNhan.E_conomy.Controller;
-//
-//import com.caNhan.E_conomy.Dto.UserDto;
-//import com.caNhan.E_conomy.Entity.Cart;
-//import com.caNhan.E_conomy.Entity.User;
-//import com.caNhan.E_conomy.Service.UserService;
-//import jakarta.servlet.http.HttpSession;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.ResponseEntity;
-////import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@RestController
-//@RequestMapping("/user")
-//public class UserController {
-//    private static final Logger logger = LoggerFactory.getLogger(User.class);
+package com.caNhan.E_conomy.Controller;
+
+import com.caNhan.E_conomy.Dto.ResponseDto.UserResponseDTO;
+import com.caNhan.E_conomy.Dto.UserDto;
+import com.caNhan.E_conomy.Entity.User;
+import com.caNhan.E_conomy.Response.ResponseData;
+import com.caNhan.E_conomy.Service.UserService;
+import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/user")
+public class UserController {
 //    private UserService userService;
 //    //private PasswordEncoder passwordEncoder;
 //    @Autowired
 //    public UserController(UserService userService) {
 //        this.userService = userService;
 //    }
-////    @PostMapping("/add")
-////    public ResponseEntity<?> saveUser(@RequestBody User user){
-////        if (userService.findByEmail(user.getEmail()).isPresent()){
-////            return ResponseEntity.badRequest().body("Email đã được sử dụng!");
-////        }
-////        User saveUser = userService.saveUser(user);
-////        return ResponseEntity.ok(saveUser);
-////    }
+//    @PostMapping("/register")
+//    private ResponseEntity<?> saveUser(@ModelAttribute UserDto userDto){
+//        UserResponseDTO userResponseDTO = userService.create(userDto);
+//        ResponseData responseData = new ResponseData(
+//                HttpStatus.OK.value(),
+//                "Tạo user thành công",
+//                userResponseDTO
+//        );
+//        return ResponseEntity.ok(responseData);
+//
+//    }
 //    @GetMapping("/getAll")
 //    public ResponseEntity<?> getAllUser(){
 //        List<UserDto> userDtos = userService.findAllUser();
@@ -62,5 +64,5 @@
 //        return ResponseEntity.ok(new UserResponse(user.getId(), user.getFirstName()));
 //    }
 //    public record UserResponse(int id, String firstName) {}
-//
-//}
+
+}

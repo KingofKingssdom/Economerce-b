@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/product")
-@CrossOrigin("http://localhost:3000")
 public class ProductController {
     private ProductServiceImpl productService;
     @Autowired
@@ -102,5 +101,15 @@ public class ProductController {
                 productResponseDTOS
         );
         return  ResponseEntity.ok(responseData);
+    }
+    @GetMapping("/search/productName")
+    private ResponseEntity<?> readAllByProductName (@RequestParam (name = "productName") String productName){
+        List<ProductResponseDTO> productResponseDTOS = productService.readByProductName(productName);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy sản phẩm theo tên thành công",
+                productResponseDTOS
+        );
+        return ResponseEntity.ok(responseData);
     }
 }

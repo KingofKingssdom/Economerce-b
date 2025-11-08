@@ -24,4 +24,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                                          @Param("brandId") Long BrandId,
                                          Pageable pageable);
     List<Product> findAllByFeatured (boolean featured);
+    @Query("SELECT p FROM Product p " +
+            "WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%'))")
+    List<Product> findAllByProductName(@Param("productName") String productName);
 }

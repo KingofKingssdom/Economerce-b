@@ -18,6 +18,7 @@ public class ProductResponseDTO {
     private Long brandId;
     private boolean featured;
     private boolean promotional;
+    private int quantityProduct;
     public ProductResponseDTO() {
     }
 
@@ -115,5 +116,13 @@ public class ProductResponseDTO {
 
     public void setPromotional(boolean promotional) {
         this.promotional = promotional;
+    }
+
+    public int getQuantityProduct() {
+        return quantityProduct;
+    }
+
+    public void setQuantityProduct(int quantityProduct) {
+        this.quantityProduct = quantityProduct;
     }
 }

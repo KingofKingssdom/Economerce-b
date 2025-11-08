@@ -9,7 +9,9 @@ public class ProductVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String storage;
+    @Column(name = "price_origin")
     private double priceOrigin;
+    @Column(name = "price_discount")
     private double priceDiscount;
     @ManyToOne
     @JoinColumn(name = "product_id")

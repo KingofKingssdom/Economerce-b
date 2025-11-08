@@ -10,5 +10,6 @@ public interface BrandService {
     Brand create(BrandDTO brandDTO);
     List<Brand> realAll();
     List<Brand> readByCategoryId(Long categoryId);
+    Brand update(Long brandId, BrandDTO brandDTO);
 
 }

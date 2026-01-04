@@ -62,6 +62,7 @@ public class CartItemSeriveImpl implements CartItemService {
             cartItem.setCart(cart);
             cartItem.setProductPrice(productVariant.getPriceDiscount());
             cartItem.setProduct(product);
+            cartItem.setCategoryId(product.getCategory().getId());
             cartItem.setProductColor(productColor);
             cartItem.setProductVariant(productVariant);
             cartItem.setQuantity(1);
@@ -90,6 +91,7 @@ public class CartItemSeriveImpl implements CartItemService {
                     dto.setQuantity(item.getQuantity());
                     dto.setProductPrice(item.getProductPrice());
                     dto.setTotalPrice(item.getTotalPrice());
+                    dto.setCategoryId(item.getCategoryId());
                     if (item.getProduct() != null) {
                         dto.setProductName(item.getProduct().getProductName());
                     }

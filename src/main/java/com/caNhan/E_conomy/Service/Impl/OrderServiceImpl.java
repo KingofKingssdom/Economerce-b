@@ -1,5 +1,6 @@
 package com.caNhan.E_conomy.Service.Impl;
 
+import com.caNhan.E_conomy.Dto.ResponseDto.OrderCountStatusResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTOU;
 import com.caNhan.E_conomy.Entity.*;
@@ -61,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setProductColor(cartItem.getProductColor());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setPriceBuy(cartItem.getProductPrice());
+            orderItem.setCategoryId(cartItem.getCategoryId());
             totalPrice += orderItem.getPriceBuy() * orderItem.getQuantity();
 
             order.getOrderItems().add(orderItem);
@@ -173,5 +175,19 @@ public class OrderServiceImpl implements OrderService {
         }
         Order update = orderRepository.save(order);
         return modelMapper.map(update, OrderResponseDTO.class);
+    }
+
+    @Override
+    public List<OrderResponseDTO> findAllOrdersByStatus(OrderStatus orderStatus) {
+        List<Order> orders = orderRepository.findOrderByStatus(orderStatus);
+
+        return orders.stream()
+                .map(order -> modelMapper.map(order, OrderResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderCountStatusResponseDTO> countByStatus() {
+        return orderRepository.countByStatus();
     }
 }

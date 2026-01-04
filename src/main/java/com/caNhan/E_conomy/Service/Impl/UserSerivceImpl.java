@@ -62,28 +62,28 @@ public class UserSerivceImpl implements UserService {
         return modelMapper.map(saveUser, UserResponseDTO.class);
     }
 
-//    @Override
-//    public UserResponseDTO createAdmin(UserDto userDto) {
-//        Optional<User> existingUser = userRepository.findByPhoneNumber(userDto.getPhoneNumber());
-//        User user;
-//        if (existingUser.isPresent()) {
-//            user = existingUser.get();
-//        }
-//        else {
-//            user = new User();
-//            user.setFullName(userDto.getFullName());
-//            user.setPhoneNumber(userDto.getPhoneNumber());
-//            user.setEmail(userDto.getEmail());
-//            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-//
-//            Cart cart = new Cart();
-//            cart.setUser(user);
-//            user.setCart(cart);
-//        }
-//        Roles defaultRole = roleRepository.findRolesByRoleName("ADMIN")
-//                .orElseThrow(() -> new RuntimeException("Default role not found"));
-//        user.setRoles(new ArrayList<>(List.of(defaultRole)));
-//        User saveUser = userRepository.save(user);
-//        return modelMapper.map(saveUser, UserResponseDTO.class);
-//    }
+    @Override
+    public UserResponseDTO createAdmin(UserDto userDto) {
+        Optional<User> existingUser = userRepository.findByPhoneNumber(userDto.getPhoneNumber());
+        User user;
+        if (existingUser.isPresent()) {
+            user = existingUser.get();
+        }
+        else {
+            user = new User();
+            user.setFullName(userDto.getFullName());
+            user.setPhoneNumber(userDto.getPhoneNumber());
+            user.setEmail(userDto.getEmail());
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+            Cart cart = new Cart();
+            cart.setUser(user);
+            user.setCart(cart);
+        }
+        Roles defaultRole = roleRepository.findRolesByRoleName("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Default role not found"));
+        user.setRoles(new ArrayList<>(List.of(defaultRole)));
+        User saveUser = userRepository.save(user);
+        return modelMapper.map(saveUser, UserResponseDTO.class);
+    }
 }

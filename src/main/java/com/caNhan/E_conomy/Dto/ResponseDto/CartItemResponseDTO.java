@@ -12,6 +12,7 @@ public class CartItemResponseDTO {
     private double totalPrice;
     private ProductVariantDTO productVariant;
     private ProductColorResponseDTO productColor;
+    private Long categoryId;
     public CartItemResponseDTO() {
     }
 
@@ -69,5 +70,13 @@ public class CartItemResponseDTO {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

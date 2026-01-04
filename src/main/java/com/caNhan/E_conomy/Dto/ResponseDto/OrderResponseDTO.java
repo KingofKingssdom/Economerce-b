@@ -10,6 +10,7 @@ public class OrderResponseDTO {
     private String paymentStatus;
     private double totalPrice;
     private String orderName;
+
     public OrderResponseDTO() {
     }
 
@@ -68,4 +69,5 @@ public class OrderResponseDTO {
     public void setOrderName(String orderName) {
         this.orderName = orderName;
     }
+
 }

@@ -10,6 +10,8 @@ public class CartItem {
     private Long id;
     @Column(name = "product_price")
     private Double productPrice;
+    @Column(name = "category_id")
+    private Long categoryId;
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
@@ -87,5 +89,13 @@ public class CartItem {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

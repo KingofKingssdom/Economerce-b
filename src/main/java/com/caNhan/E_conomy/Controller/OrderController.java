@@ -2,6 +2,7 @@ package com.caNhan.E_conomy.Controller;
 
 import com.caNhan.E_conomy.Custom.CustomUserDetail;
 import com.caNhan.E_conomy.Dto.OrderDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.OrderCountStatusResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTOU;
 import com.caNhan.E_conomy.Entity.Cart;
@@ -132,5 +133,29 @@ public class OrderController {
                 orderResponseDTO
         );
         return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/orderStatus")
+    private ResponseEntity<?> getOrderByOrderStatus (
+            @RequestParam("orderStatus") OrderStatus orderStatus) {
+        List<OrderResponseDTO> orderResponseDTOS =
+                orderService.findAllOrdersByStatus(orderStatus);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Láy đơn hàng thành công",
+                orderResponseDTOS
+        );
+        return ResponseEntity.ok(responseData);
+    }
+
+    @GetMapping("/search/countOrder")
+    private ResponseEntity<?> countOrderStatus(){
+        List<OrderCountStatusResponseDTO> orderCountStatusResponseDTOS
+                = orderService.countByStatus();
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Đếm toàn bộ trạng thái đơn hàng thành công",
+                orderCountStatusResponseDTOS);
+        return  ResponseEntity.ok(responseData);
     }
 }

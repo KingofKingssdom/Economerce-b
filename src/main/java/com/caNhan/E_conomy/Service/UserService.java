@@ -5,5 +5,5 @@ import com.caNhan.E_conomy.Dto.UserDto;
 
 public interface UserService {
     UserResponseDTO create(UserDto userDto);
-//    UserResponseDTO createAdmin(UserDto userDto);
+    UserResponseDTO createAdmin(UserDto userDto);
 }

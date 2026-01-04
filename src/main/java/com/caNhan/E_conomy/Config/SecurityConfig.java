@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/admin/login").hasRole("ADMIN")
                         .requestMatchers("/api/product/**").permitAll()
                         .requestMatchers("/api/productColor/**").permitAll()
                         .requestMatchers("/api/productVariant/**").permitAll()
@@ -73,9 +74,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000",
-                "https://g814wts5-3000.asse.devtunnels.ms",
-                "https://g814wts5-8080.asse.devtunnels.ms")); // frontend
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+//                "https://g814wts5-3000.asse.devtunnels.ms",
+//                "https://g814wts5-8080.asse.devtunnels.ms"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true); // cho phép cookie
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));

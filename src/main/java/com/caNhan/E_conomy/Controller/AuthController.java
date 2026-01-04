@@ -42,20 +42,41 @@ public class AuthController {
         return ResponseEntity.ok(responseData);
 
     }
-//    @PostMapping("/admin/register")
-//    private ResponseEntity<?> saveAdmin(@RequestBody UserDto userDto){
-//        UserResponseDTO userResponseDTO = userService.createAdmin(userDto);
-//        ResponseData responseData = new ResponseData(
-//                HttpStatus.OK.value(),
-//                "Tạo user thành công",
-//                userResponseDTO
-//        );
-//        return ResponseEntity.ok(responseData);
-//
-//    }
+    @PostMapping("/admin/register")
+    private ResponseEntity<?> saveAdmin(@RequestBody UserDto userDto){
+        UserResponseDTO userResponseDTO = userService.createAdmin(userDto);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Tạo user thành công",
+                userResponseDTO
+        );
+        return ResponseEntity.ok(responseData);
+
+    }
 
     @PostMapping("/login")
     private ResponseEntity<?> login (@RequestBody Login login, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+
+        //  lưu SecurityContext vào HttpSession
+        HttpSession session = request.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+
+        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+        loginResponseDTO.setId(userDetails.getId());
+        loginResponseDTO.setFullName(userDetails.getUsername());
+        session.setAttribute("USER_ID", userDetails.getId());
+        return ResponseEntity.ok(loginResponseDTO);
+    }
+
+    @PostMapping("/admin/login")
+    private ResponseEntity<?> loginAdmin (@RequestBody Login login, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);

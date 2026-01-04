@@ -14,6 +14,8 @@ public class OrderItem {
     private int quantity;
     @Column(name = "price_buy")
     private double priceBuy;
+    @Column(name = "caterory_id")
+    private Long categoryId;
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
@@ -82,5 +84,13 @@ public class OrderItem {
 
     public void setProductVariant(ProductVariant productVariant) {
         this.productVariant = productVariant;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

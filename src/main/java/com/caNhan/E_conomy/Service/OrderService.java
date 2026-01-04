@@ -1,5 +1,6 @@
 package com.caNhan.E_conomy.Service;
 
+import com.caNhan.E_conomy.Dto.ResponseDto.OrderCountStatusResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTOU;
 import com.caNhan.E_conomy.Entity.CartItem;
@@ -19,4 +20,6 @@ public interface OrderService {
     OrderResponseDTO deleteOrder(Long orderId, OrderStatus orderStatus);
     List<OrderResponseDTOU> findAllOrders ();
     OrderResponseDTO updateOrderPaymentStatus(Long orderId, PaymentStatus paymentStatus);
+    List<OrderResponseDTO> findAllOrdersByStatus(OrderStatus orderStatus);
+    List<OrderCountStatusResponseDTO> countByStatus();
 }

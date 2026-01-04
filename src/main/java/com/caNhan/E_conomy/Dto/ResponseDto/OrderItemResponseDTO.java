@@ -13,6 +13,7 @@ public class OrderItemResponseDTO {
     private String productName;
     private ProductVariantDTO productVariant;
     private ProductColorResponseDTO productColor;
+    private Long categoryId;
     public OrderItemResponseDTO() {
     }
 
@@ -62,5 +63,13 @@ public class OrderItemResponseDTO {
 
     public void setProductColor(ProductColorResponseDTO productColor) {
         this.productColor = productColor;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 }

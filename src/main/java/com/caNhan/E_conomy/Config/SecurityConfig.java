@@ -2,9 +2,11 @@ package com.caNhan.E_conomy.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
@@ -31,16 +33,18 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auth/admin/login").hasRole("ADMIN")
                         .requestMatchers("/api/product/**").permitAll()
                         .requestMatchers("/api/productColor/**").permitAll()
                         .requestMatchers("/api/productVariant/**").permitAll()
+                        .requestMatchers("/api/productSpecification/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/api/brand/**").permitAll()
                         .requestMatchers("/api/category/**").permitAll()
+                        .requestMatchers("/api/specificationDetail/**").permitAll()
                         .requestMatchers("/api/cart/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/cartItem/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/order/**").permitAll()

@@ -35,6 +35,7 @@ public class SpecificationDetailServiceImpl implements SpecificationDetailServic
                 .findById(specificationDetailDTO.getProductSpecificationId());
         SpecificationDetail specificationDetail = new SpecificationDetail();
         if(productSpecificationOptional.isEmpty()){
+            System.out.println( "Dữ liệu đang product" + productSpecificationRepository.findAll());
             throw new NoSuchCustomerExistsException("Không tạo được thông số chi tiet với thông số có id " + specificationDetailDTO.getProductSpecificationId());
         }
         else {

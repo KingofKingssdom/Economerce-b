@@ -31,5 +31,15 @@ public class ProductSpecificationController {
         return ResponseEntity.ok(responseData);
     }
 
+    @GetMapping("/search")
+    private ResponseEntity<?> getProductSpecificationByProductId(@RequestParam(name = "productId") Long productId) {
+        List<ProductSpecificationResponseDTO> specificationResponseDTOS  = productSpecificationService.findByProductId(productId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy thông số theo id sản phẩm thành công",
+                specificationResponseDTOS
+        );
+        return  ResponseEntity.ok(responseData);
+    }
 
 }

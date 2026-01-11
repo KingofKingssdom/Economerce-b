@@ -4,9 +4,12 @@ import com.caNhan.E_conomy.Entity.ProductSpecification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ProductSpecificationRepository extends JpaRepository<ProductSpecification, Long> {
     Optional<ProductSpecification> findByNameSpecification(String nameSpecification);
+
+    List<ProductSpecification> findByProducts_Id (Long productId);
 }

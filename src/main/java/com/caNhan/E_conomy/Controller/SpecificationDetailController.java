@@ -6,10 +6,7 @@ import com.caNhan.E_conomy.Service.SpecificationDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/specificationDetail")
@@ -20,7 +17,7 @@ public class SpecificationDetailController {
         this.specificationDetailService = specificationDetailService;
     }
     @PostMapping("/create")
-    private ResponseEntity<?> addSpecificationDetail (SpecificationDetailDTO specificationDetailDTO) {
+    private ResponseEntity<?> addSpecificationDetail (@ModelAttribute SpecificationDetailDTO specificationDetailDTO) {
         SpecificationDetailDTO specificationDetailResponse = specificationDetailService.create(specificationDetailDTO);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),

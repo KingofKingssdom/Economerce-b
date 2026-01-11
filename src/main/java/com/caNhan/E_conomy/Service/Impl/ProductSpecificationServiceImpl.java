@@ -48,4 +48,13 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
        ProductSpecification saveSpecification = productSpecificationRepository.save(specification);
        return  modelMapper.map(saveSpecification, ProductSpecificationResponseDTO.class);
     }
+
+    @Override
+    public List<ProductSpecificationResponseDTO> findByProductId(Long productId) {
+        List<ProductSpecification>
+                productSpecs = productSpecificationRepository.findByProducts_Id(productId);
+        return productSpecs.stream()
+                .map(productSpec ->modelMapper.map(productSpec, ProductSpecificationResponseDTO.class))
+                .toList();
+    }
 }

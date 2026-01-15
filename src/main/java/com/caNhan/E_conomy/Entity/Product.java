@@ -39,6 +39,8 @@ public class Product {
     private List<ProductSpecification> specifications;
     @OneToMany(mappedBy = "product")
     private List<ProductVariant> productVariants;
+    @OneToMany(mappedBy = "product")
+    private List<SpecificationDetail> specificationDetails;
     public Product() {
     }
 
@@ -144,5 +146,13 @@ public class Product {
 
     public void setQuantityProduct(int quantityProduct) {
         this.quantityProduct = quantityProduct;
+    }
+
+    public List<SpecificationDetail> getSpecificationDetails() {
+        return specificationDetails;
+    }
+
+    public void setSpecificationDetails(List<SpecificationDetail> specificationDetails) {
+        this.specificationDetails = specificationDetails;
     }
 }

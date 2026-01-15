@@ -2,9 +2,11 @@ package com.caNhan.E_conomy.Service.Impl;
 
 
 import com.caNhan.E_conomy.Dto.SpecificationDetailDTO;
+import com.caNhan.E_conomy.Entity.Product;
 import com.caNhan.E_conomy.Entity.ProductSpecification;
 import com.caNhan.E_conomy.Entity.SpecificationDetail;
 import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
+import com.caNhan.E_conomy.Repository.ProductRepository;
 import com.caNhan.E_conomy.Repository.ProductSpecificationRepository;
 import com.caNhan.E_conomy.Repository.SpecificationDetailRepository;
 import com.caNhan.E_conomy.Service.SpecificationDetailService;
@@ -18,12 +20,15 @@ import java.util.Optional;
 public class SpecificationDetailServiceImpl implements SpecificationDetailService {
     private SpecificationDetailRepository specificationDetailRepository;
     private ProductSpecificationRepository productSpecificationRepository;
+    private ProductRepository productRepository;
     private ModelMapper modelMapper;
     @Autowired
     public SpecificationDetailServiceImpl(
+            ProductRepository productRepository,
             SpecificationDetailRepository specificationDetailRepository,
             ProductSpecificationRepository productSpecificationRepository,
             ModelMapper modelMapper) {
+        this.productRepository = productRepository;
         this.specificationDetailRepository = specificationDetailRepository;
         this.productSpecificationRepository = productSpecificationRepository;
         this.modelMapper = modelMapper;
@@ -33,6 +38,8 @@ public class SpecificationDetailServiceImpl implements SpecificationDetailServic
     public SpecificationDetailDTO create(SpecificationDetailDTO specificationDetailDTO) {
         Optional<ProductSpecification> productSpecificationOptional = productSpecificationRepository
                 .findById(specificationDetailDTO.getProductSpecificationId());
+        Optional<Product> productOptional = productRepository
+                .findById(specificationDetailDTO.getProductId());
         SpecificationDetail specificationDetail = new SpecificationDetail();
         if(productSpecificationOptional.isEmpty()){
             System.out.println( "Dữ liệu đang product" + productSpecificationRepository.findAll());
@@ -42,6 +49,7 @@ public class SpecificationDetailServiceImpl implements SpecificationDetailServic
             specificationDetail.setLabelSpecification(specificationDetailDTO.getLabelSpecification());
             specificationDetail.setValueSpecification(specificationDetailDTO.getValueSpecification());
             specificationDetail.setProductSpecification(productSpecificationOptional.get());
+            specificationDetail.setProduct(productOptional.get());
         }
         SpecificationDetail saveSpecificationDetail = specificationDetailRepository.save(specificationDetail);
         return modelMapper.map(saveSpecificationDetail, SpecificationDetailDTO.class);

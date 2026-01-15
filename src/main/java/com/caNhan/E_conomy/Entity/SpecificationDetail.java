@@ -15,6 +15,9 @@ public class SpecificationDetail {
     @ManyToOne
     @JoinColumn(name = "product_specification_id")
     private ProductSpecification productSpecification;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
     public SpecificationDetail() {
     }
 
@@ -48,5 +51,13 @@ public class SpecificationDetail {
 
     public void setProductSpecification(ProductSpecification productSpecification) {
         this.productSpecification = productSpecification;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

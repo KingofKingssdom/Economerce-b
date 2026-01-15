@@ -21,6 +21,17 @@
 - mvn spring-boot:run
 
 ## Thông tin thanh toán VNPay trong môi trường test
+- Truy cập website : https://sandbox.vnpayment.vn/devreg 
+điền các thông tin sau: 
+    Tên website      : demothanhtoanonline123
+- Địa chỉ url      : demothanhtoanonline123.com
+- email đăng kí    : nhập địa chỉ email
+- mật khẩu         : mật khẩu email
+- Kiểm tra email vừa đăng kí sẽ thấy 2 dòng dữ liệu: vnp_Tmncode và Serect Key
+- Tạo một file .env ở thư mục gốc của dự án cấu hình như sau
+  VNPAY_TMN_CODE = vnp_Tmncode
+  VNPAY_HASH_SECRET = Serect Key
+- Khi thanh toán nhập  thông tin 
 - Chọn thanh toán nội địa theo ngân hàng
   - Điền thông tin chuyển khoản như sau:
     Ngân hàng     : NCB

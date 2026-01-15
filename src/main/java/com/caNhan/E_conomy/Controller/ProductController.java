@@ -56,9 +56,9 @@ public class ProductController {
     }
 
     @PutMapping("/update")
-    private ResponseEntity<?> update(@RequestParam(name = "productId") Long categoryId,
+    private ResponseEntity<?> update(@RequestParam(name = "productId") Long productId,
                                      @ModelAttribute ProductDTO productDTO){
-        ProductResponseDTO productResponseDTO = productService.update(categoryId, productDTO);
+        ProductResponseDTO productResponseDTO = productService.update(productId, productDTO);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Cập nhập sản phẩm thành cong",

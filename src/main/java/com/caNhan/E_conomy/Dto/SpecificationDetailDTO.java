@@ -4,7 +4,7 @@ public class SpecificationDetailDTO {
     private String labelSpecification;
     private String valueSpecification;
     private Long productSpecificationId;
-
+    private Long productId;
     public SpecificationDetailDTO() {
     }
 
@@ -30,5 +30,13 @@ public class SpecificationDetailDTO {
 
     public void setProductSpecificationId(Long productSpecificationId) {
         this.productSpecificationId = productSpecificationId;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

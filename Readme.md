@@ -75,5 +75,6 @@ src/
 │   │   ├── application.properties 
 │   │   ├── static/
 │   │   └── templates/
-└── demo-database.sql     # File demo database (MySQL)
+└── data/
+    └── demo_database.sql     # File demo database (MySQL)
 

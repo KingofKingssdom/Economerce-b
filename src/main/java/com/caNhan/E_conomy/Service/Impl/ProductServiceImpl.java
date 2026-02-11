@@ -212,4 +212,23 @@ public class ProductServiceImpl implements ProductService {
                     return dto;})
                 .toList();
     }
+
+    @Override
+    public List<ProductResponseDTO> readAllByPromotionalAndCategory(boolean promotional, Long categoryId) {
+        List<Product> products = productRepository.findAllByPromotionalAndCategory(promotional, categoryId);
+
+        return products.stream()
+                .map(product -> {
+                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+
+                    if (product.getProductVariants() != null) {
+                        dto.setProductVariants(
+                                product.getProductVariants().stream()
+                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                        .toList()
+                        );
+                    }
+                    return dto;})
+                .toList();
+    }
 }

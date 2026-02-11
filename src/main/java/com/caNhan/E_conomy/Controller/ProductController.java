@@ -102,6 +102,17 @@ public class ProductController {
         );
         return  ResponseEntity.ok(responseData);
     }
+    @GetMapping("/search/promotional")
+    private ResponseEntity<?> readAllByPromotionalAndCategory (@RequestParam (name = "promotional") boolean promotional,
+                                                               @RequestParam(name = "categoryId") Long categoryId) {
+        List<ProductResponseDTO> productResponseDTOS = productService.readAllByPromotionalAndCategory(promotional, categoryId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Lấy sản phẩm theo nôi bật thành công",
+                productResponseDTOS
+        );
+        return  ResponseEntity.ok(responseData);
+    }
     @GetMapping("/search/productName")
     private ResponseEntity<?> readAllByProductName (@RequestParam (name = "productName") String productName){
         List<ProductResponseDTO> productResponseDTOS = productService.readByProductName(productName);

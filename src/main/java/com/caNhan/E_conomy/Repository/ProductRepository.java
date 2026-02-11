@@ -23,7 +23,13 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     Page<Product> findByCategoryAndBrand(@Param("categoryId") Long categoryId,
                                          @Param("brandId") Long BrandId,
                                          Pageable pageable);
+    @Query("SELECT p FROM Product p" +
+    " WHERE p.promotional = :promotional AND p.category.id = :categoryId"
+    )
+    List<Product> findAllByPromotionalAndCategory (@Param("promotional") boolean promotional,
+                                                   @Param("categoryId") Long categoryId);
     List<Product> findAllByFeatured (boolean featured);
+
     @Query("SELECT p FROM Product p " +
             "WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :productName, '%'))")
     List<Product> findAllByProductName(@Param("productName") String productName);

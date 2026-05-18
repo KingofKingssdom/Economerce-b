@@ -15,9 +15,9 @@ public class GlobalException {
     public ResponseError handleNoExistsExeption(NoSuchCustomerExistsException ex) {
         return new ResponseError(HttpStatus.NOT_FOUND.value(),ex.getMessage());
     }
-//    @ExceptionHandler(value = CustomerAlreadyExistsException.class)
-//    @ResponseBody
-//    public ResponseError handleAlreadyExistsExeption(CustomerAlreadyExistsException ex) {
-//        return  new ResponseError(HttpStatus.NOT_FOUND.value(),ex.getMessage());
-//    }
+    @ExceptionHandler(value = CustomerAlreadyExistsException.class)
+    @ResponseBody
+    public ResponseError handleAlreadyExistsExeption(CustomerAlreadyExistsException ex) {
+        return  new ResponseError(HttpStatus.NOT_FOUND.value(),ex.getMessage());
+    }
 }

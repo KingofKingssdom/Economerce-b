@@ -1,12 +1,12 @@
 package com.caNhan.E_conomy.Service.Impl;
 
-import com.caNhan.E_conomy.Dto.ProductDTO;
-import com.caNhan.E_conomy.Dto.ProductVariantDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductResponseDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResProductDto;
 import com.caNhan.E_conomy.Entity.Brand;
 import com.caNhan.E_conomy.Entity.Category;
 import com.caNhan.E_conomy.Entity.Product;
+import com.caNhan.E_conomy.GlobalExeption.Exception.CustomerAlreadyExistsException;
 import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
 import com.caNhan.E_conomy.Repository.BrandRepository;
 import com.caNhan.E_conomy.Repository.CategoryRepository;
@@ -15,9 +15,6 @@ import com.caNhan.E_conomy.Service.ProductService;
 import com.caNhan.E_conomy.Util.FileStorageUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -40,94 +37,86 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponseDTO create(ProductDTO productDto) {
+    public ResProductDto createProduct(ReqProductDto reqProductDto) {
+        Optional<Product> productOptional = productRepository.findAllByProductCode(reqProductDto.getProductCode());
+        if(productOptional.isPresent()){
+            throw new CustomerAlreadyExistsException("Product has already existed with product code " + reqProductDto.getProductCode());
+        }
+        Optional<Category> categoryOptional = categoryRepository.findById(reqProductDto.getCategoryId());
+        if(categoryOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Category not found with id " + reqProductDto.getCategoryId());
+        }
+        Optional<Brand> brandOptional = brandRepository.findById(reqProductDto.getBrandId());
+        if(brandOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Brand not found with id " + reqProductDto.getBrandId());
+        }
         try{
-            Optional<Category> categoryOptional = categoryRepository.findById(productDto.getCategoryId());
-            Optional<Brand> brandOptional = brandRepository.findById(productDto.getBrandId());
-            Product product;
-            if(categoryOptional.isEmpty() && brandOptional.isEmpty()){
-                throw new NoSuchCustomerExistsException("Không tạo được sản phẩm với danh mục Id = " + productDto.getCategoryId()
-                                                        + " Id brand = " + productDto.getBrandId());
-            }
-            else{
-                String productPath = FileStorageUtil.storeFile("Product",productDto.getUrlPhoto());
-                product = new Product();
-                product.setProductCode(productDto.getProductCode());
-                product.setProductName(productDto.getProductName());
-                product.setDescription(productDto.getDescription());
-                product.setPhotoUrl(productPath);
-                product.setFeatured(productDto.isFeatured());
-                product.setPromotional(productDto.isPromotional());
-                product.setQuantityProduct(productDto.getQuantityProduct());
-                product.setCategory(categoryOptional.get());
-                product.setBrand(brandOptional.get());
-            }
+            String productPath = FileStorageUtil.storeFile("Product",reqProductDto.getUrlPhoto());
+            Product  product = new Product();
+            product.setProductCode(reqProductDto.getProductCode());
+            product.setProductName(reqProductDto.getProductName());
+            product.setDescription(reqProductDto.getDescription());
+            product.setPhotoUrl(productPath);
+            product.setFeatured(reqProductDto.isFeatured());
+            product.setPromotional(reqProductDto.isPromotional());
+            product.setCategory(categoryOptional.get());
+            product.setBrand(brandOptional.get());
             Product saveProduct =  productRepository.save(product);
-            return modelMapper.map(saveProduct,ProductResponseDTO.class);
+            return modelMapper.map(saveProduct, ResProductDto.class);
         }
-        catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+        catch (Exception ex){
+            throw new RuntimeException(ex.getMessage());
         }
+    }
+
+    @Override
+    public List<ResProductDto> getAllProduct() {
+       List<Product> productList = productRepository.findAll();
+       List<ResProductDto> productDtoList = productList.stream()
+               .map(product -> modelMapper.map(product, ResProductDto.class))
+               .toList();
+        return productDtoList;
+    }
+
+
+    @Override
+    public ResProductDto getProductByProductCode(String productCode) {
+        Optional<Product> productOptional = productRepository.findAllByProductCode(productCode);
+       if(productOptional.isEmpty()){
+           throw new NoSuchCustomerExistsException("Product not found with product code " + productCode);
+       }
+       ResProductDto resProductDto = modelMapper.map(productCode, ResProductDto.class);
+       return  resProductDto;
 
     }
 
     @Override
-    public Page<ProductResponseDTO> readAll(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize); // dùng pageNumber, pageSize truyền vào
-        Page<Product> products = productRepository.findAll(pageable);
-
-        return products.map(product -> {
-            ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
-
-            if (product.getProductVariants() != null) {
-                dto.setProductVariants(
-                        product.getProductVariants().stream()
-                                .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
-                                .toList()
-                );
-            }
-
-            return dto;
-        });}
-
-
-    @Override
-    public ProductResponseDTO readById(Long productId) {
+    public ResProductDto updateProduct(long productId, ReqProductDto reqProductDto) {
         Optional<Product> productOptional = productRepository.findById(productId);
-       ProductDTO productDTO;
         if(productOptional.isEmpty()){
-            throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id = " + productId);
-
+            throw new NoSuchCustomerExistsException("Product not found with id " + productId);
         }
-        else {
-            return modelMapper.map(productOptional.get(), ProductResponseDTO.class) ;
+        Optional<Category> categoryOptional = categoryRepository.findById(reqProductDto.getCategoryId());
+        if(categoryOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Category not found with id " + reqProductDto.getCategoryId());
         }
-
-    }
-
-    @Override
-    public ProductResponseDTO update(Long productId, ProductDTO productDTO) {
+        Optional<Brand> brandOptional = brandRepository.findById(reqProductDto.getBrandId());
+        if(brandOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Brand not found with id " + reqProductDto.getBrandId());
+        }
         try{
-            Optional<Product> productOptional = productRepository.findById(productId);
-            Product product;
-            if(productOptional.isEmpty()){
-                throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id = " + productId);
-            }
-            else {
-                Optional<Category> category = categoryRepository.findById(productDTO.getCategoryId());
-                String productPath = FileStorageUtil.storeFile("Product",productDTO.getUrlPhoto());
-                product = new Product();
-                product.setProductCode(productDTO.getProductCode());
-                product.setProductName(productDTO.getProductName());
-                product.setDescription(productDTO.getDescription());
-                product.setFeatured(productDTO.isFeatured());
-                product.setPromotional(productDTO.isPromotional());
-                product.setPhotoUrl(productPath);
-                product.setQuantityProduct(productDTO.getQuantityProduct());
-                product.setCategory(category.get());
-            }
+            String productPath = FileStorageUtil.storeFile("Product",reqProductDto.getUrlPhoto());
+            Product product = new Product();
+            product.setProductCode(reqProductDto.getProductCode());
+            product.setProductName(reqProductDto.getProductName());
+            product.setDescription(reqProductDto.getDescription());
+            product.setFeatured(reqProductDto.isFeatured());
+            product.setPromotional(reqProductDto.isPromotional());
+            product.setPhotoUrl(productPath);
+            product.setCategory(categoryOptional.get());
+            product.setBrand(brandOptional.get());
             Product updateProduct = productRepository.save(product);
-            return modelMapper.map(updateProduct,ProductResponseDTO.class);
+            return modelMapper.map(updateProduct, ResProductDto.class);
         }
         catch (IOException e){
             throw new RuntimeException(e.getMessage());
@@ -135,59 +124,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponseDTO> readByCategory(Long categoryId, int pageNumber, int pageSize) {
-        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
-        if(categoryOptional.isEmpty()){
-            throw new NoSuchCustomerExistsException("Không tìm thấy sản phẩm với id danh mục = " + categoryId);
-        }
-        else {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
-            Page<Product> products = productRepository.findByCategoryId(categoryId,pageable);
-            return products.map(product -> {
-                        ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
-
-                        if (product.getProductVariants() != null) {
-                            dto.setProductVariants(
-                                    product.getProductVariants().stream()
-                                            .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
-                                            .toList()
-                            );
-                        }
-                        return dto;});
-        }
+    public List<ResProductDto> getAllProductByCategory(long categoryId) {
+        List<Product> productList = productRepository.findByCategoryId(categoryId);
+        List<ResProductDto> resProductDtos = productList.stream()
+                .map(product -> modelMapper.map(product, ResProductDto.class))
+                .toList();
+        return resProductDtos;
     }
 
     @Override
-    public Page<ProductResponseDTO> readByCategoryAndBrand(Long categoryId, Long brandId, int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Product> products = productRepository.findByCategoryAndBrand(categoryId, brandId, pageable);
-        return products.map(product -> {
-                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
-
-                    if (product.getProductVariants() != null) {
-                        dto.setProductVariants(
-                                product.getProductVariants().stream()
-                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
-                                        .toList()
-                        );
-                    }
-
-                    return dto;
-                });
-    }
-
-    @Override
-    public List<ProductResponseDTO> readAllByFeatured(boolean featured) {
+    public List<ResProductDto> getAllProductByFeatured(boolean featured) {
         List<Product> products = productRepository.findAllByFeatured(featured);
-
         return products.stream()
                 .map(product -> {
-            ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+            ResProductDto dto = modelMapper.map(product, ResProductDto.class);
 
             if (product.getProductVariants() != null) {
                 dto.setProductVariants(
                         product.getProductVariants().stream()
-                                .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                .map(variant -> modelMapper.map(variant, ReqProductVariantDto.class))
                                 .toList()
                 );
             }
@@ -196,16 +151,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDTO> readByProductName(String productName) {
+    public List<ResProductDto> getProductByProductName(String productName) {
         List<Product> products = productRepository.findAllByProductName(productName);
         return products.stream()
                 .map(product -> {
-                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
+                    ResProductDto dto = modelMapper.map(product, ResProductDto.class);
 
                     if (product.getProductVariants() != null) {
                         dto.setProductVariants(
                                 product.getProductVariants().stream()
-                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+                                        .map(variant -> modelMapper.map(variant, ReqProductVariantDto.class))
                                         .toList()
                         );
                     }
@@ -213,22 +168,36 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-    @Override
-    public List<ProductResponseDTO> readAllByPromotionalAndCategory(boolean promotional, Long categoryId) {
-        List<Product> products = productRepository.findAllByPromotionalAndCategory(promotional, categoryId);
-
-        return products.stream()
-                .map(product -> {
-                    ProductResponseDTO dto = modelMapper.map(product, ProductResponseDTO.class);
-
-                    if (product.getProductVariants() != null) {
-                        dto.setProductVariants(
-                                product.getProductVariants().stream()
-                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
-                                        .toList()
-                        );
-                    }
-                    return dto;})
+//    @Override
+//    public List<ResProductDto> readAllByPromotionalAndCategory(boolean promotional, Long categoryId) {
+//        List<Product> products = productRepository.findAllByPromotionalAndCategory(promotional, categoryId);
+//
+//        return products.stream()
+//                .map(product -> {
+//                    ResProductDto dto = modelMapper.map(product, ResProductDto.class);
+//
+//                    if (product.getProductVariants() != null) {
+//                        dto.setProductVariants(
+//                                product.getProductVariants().stream()
+//                                        .map(variant -> modelMapper.map(variant, ProductVariantDTO.class))
+//                                        .toList()
+//                        );
+//                    }
+//                    return dto;})
+//                .toList();
+//    }
+   public List<ResProductDto> getAllByPromotional(boolean promotional){
+        List<Product> productList = productRepository.findAllByPromotional(promotional);
+        List<ResProductDto> productDtoList = productList.stream()
+                .map(product -> modelMapper.map(product, ResProductDto.class))
                 .toList();
+        return  productDtoList;
+    }
+   public List<ResProductDto> getAllProductByCategoryAndBrand(long categoryId, long brandId){
+        List<Product> productList = productRepository.findByCategoryAndBrand(categoryId, brandId);
+        List<ResProductDto> productDtoList = productList.stream()
+                .map(product -> modelMapper.map(product, ResProductDto.class))
+                .toList();
+        return  productDtoList;
     }
 }

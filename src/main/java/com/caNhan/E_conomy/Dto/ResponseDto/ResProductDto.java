@@ -1,25 +1,22 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import com.caNhan.E_conomy.Dto.ProductVariantDTO;
-import com.caNhan.E_conomy.Entity.ProductVariant;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
 
 import java.util.List;
 
-public class ProductResponseDTO {
+public class ResProductDto {
     private Long id;
     private String productCode;
     private String productName;
     private String description;
     private String urlPhotoProduct;
     private Long categoryId;
-    private List<ProductColorResponseDTO> productColors;
     private List<ProductSpecificationResponseDTO> specifications;
-    private List<ProductVariantDTO> productVariants;
+    private List<ReqProductVariantDto> productVariants;
     private Long brandId;
     private boolean featured;
     private boolean promotional;
-    private int quantityProduct;
-    public ProductResponseDTO() {
+    public ResProductDto() {
     }
 
     public Long getId() {
@@ -70,14 +67,6 @@ public class ProductResponseDTO {
         this.categoryId = categoryId;
     }
 
-    public List<ProductColorResponseDTO> getProductColors() {
-        return productColors;
-    }
-
-    public void setProductColors(List<ProductColorResponseDTO> productColors) {
-        this.productColors = productColors;
-    }
-
     public List<ProductSpecificationResponseDTO> getSpecifications() {
         return specifications;
     }
@@ -86,11 +75,11 @@ public class ProductResponseDTO {
         this.specifications = specifications;
     }
 
-    public List<ProductVariantDTO> getProductVariants() {
+    public List<ReqProductVariantDto> getProductVariants() {
         return productVariants;
     }
 
-    public void setProductVariants(List<ProductVariantDTO> productVariants) {
+    public void setProductVariants(List<ReqProductVariantDto> productVariants) {
         this.productVariants = productVariants;
     }
 
@@ -118,11 +107,4 @@ public class ProductResponseDTO {
         this.promotional = promotional;
     }
 
-    public int getQuantityProduct() {
-        return quantityProduct;
-    }
-
-    public void setQuantityProduct(int quantityProduct) {
-        this.quantityProduct = quantityProduct;
-    }
 }

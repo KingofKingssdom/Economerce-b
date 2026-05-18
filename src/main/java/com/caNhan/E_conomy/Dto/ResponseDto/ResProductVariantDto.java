@@ -1,30 +1,13 @@
-package com.caNhan.E_conomy.Entity;
+package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "product_variant")
-public class ProductVariant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ResProductVariantDto {
     private Long id;
     private String storage;
-    @Column(name = "origin_price")
     private double originPrice;
-    @Column(name = "current_price")
     private double currentPrice;
-    @Column(name = "stock")
     private int stock;
-    @Column(name = "url_product_color")
     private String urlProductColor;
-    @Column(name = "color_name")
     private String colorName;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    public ProductVariant() {
-    }
 
     public Long getId() {
         return id;
@@ -40,14 +23,6 @@ public class ProductVariant {
 
     public void setStorage(String storage) {
         this.storage = storage;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public double getOriginPrice() {

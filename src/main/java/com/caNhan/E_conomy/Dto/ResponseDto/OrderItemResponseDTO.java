@@ -1,17 +1,13 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import com.caNhan.E_conomy.Dto.ProductColorDTO;
-import com.caNhan.E_conomy.Dto.ProductDTO;
-import com.caNhan.E_conomy.Dto.ProductVariantDTO;
-
-import java.util.List;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
 
 public class OrderItemResponseDTO {
     private Long id;
     private int quantity;
     private double priceBuy;
     private String productName;
-    private ProductVariantDTO productVariant;
+    private ReqProductVariantDto productVariant;
     private ProductColorResponseDTO productColor;
     private Long categoryId;
     public OrderItemResponseDTO() {
@@ -49,11 +45,11 @@ public class OrderItemResponseDTO {
         this.productName = productName;
     }
 
-    public ProductVariantDTO getProductVariant() {
+    public ReqProductVariantDto getProductVariant() {
         return productVariant;
     }
 
-    public void setProductVariant(ProductVariantDTO productVariant) {
+    public void setProductVariant(ReqProductVariantDto productVariant) {
         this.productVariant = productVariant;
     }
 

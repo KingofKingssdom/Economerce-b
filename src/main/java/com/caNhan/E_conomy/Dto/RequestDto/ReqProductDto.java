@@ -1,9 +1,8 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.RequestDto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class ProductDTO {
-    private Long id;
+public class ReqProductDto {
     private String productCode;
     private String productName;
     private String description;
@@ -12,16 +11,7 @@ public class ProductDTO {
     private Long brandId;
     private boolean featured;
     private boolean promotional;
-    private int quantityProduct;
-    public ProductDTO() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public ReqProductDto() {
     }
 
     public String getProductCode() {
@@ -88,11 +78,4 @@ public class ProductDTO {
         this.promotional = promotional;
     }
 
-    public int getQuantityProduct() {
-        return quantityProduct;
-    }
-
-    public void setQuantityProduct(int quantityProduct) {
-        this.quantityProduct = quantityProduct;
-    }
 }

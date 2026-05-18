@@ -1,6 +1,6 @@
 package com.caNhan.E_conomy.Service.Impl;
 
-import com.caNhan.E_conomy.Dto.ProductVariantDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.CartItemResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
 import com.caNhan.E_conomy.Entity.*;
@@ -60,7 +60,7 @@ public class CartItemSeriveImpl implements CartItemService {
         else {
             cartItem = new CartItem();
             cartItem.setCart(cart);
-            cartItem.setProductPrice(productVariant.getPriceDiscount());
+            cartItem.setProductPrice(productVariant.getCurrentPrice());
             cartItem.setProduct(product);
             cartItem.setCategoryId(product.getCategory().getId());
             cartItem.setProductColor(productColor);
@@ -99,7 +99,7 @@ public class CartItemSeriveImpl implements CartItemService {
                         dto.setProductColor(modelMapper.map(item.getProductColor(), ProductColorResponseDTO.class));
                     }
                     if (item.getProductVariant() != null) {
-                        dto.setProductVariant(modelMapper.map(item.getProductVariant(), ProductVariantDTO.class));
+                        dto.setProductVariant(modelMapper.map(item.getProductVariant(), ReqProductVariantDto.class));
                     }
 
                     return dto;

@@ -1,10 +1,8 @@
 package com.caNhan.E_conomy.Service.Impl;
 
-import com.caNhan.E_conomy.Dto.ProductColorDTO;
-import com.caNhan.E_conomy.Dto.ProductVariantDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderItemResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductResponseDTO;
 import com.caNhan.E_conomy.Entity.OrderItem;
 import com.caNhan.E_conomy.Repository.OrderItemRepository;
 import com.caNhan.E_conomy.Service.OrderItemService;
@@ -39,7 +37,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                         dto.setProductColor(modelMapper.map(orderItem.getProductColor(), ProductColorResponseDTO.class));
                     }
                     if (orderItem.getProductVariant() != null) {
-                        dto.setProductVariant(modelMapper.map(orderItem.getProductVariant(), ProductVariantDTO.class));
+                        dto.setProductVariant(modelMapper.map(orderItem.getProductVariant(), ReqProductVariantDto.class));
                     }
 
                     return dto;

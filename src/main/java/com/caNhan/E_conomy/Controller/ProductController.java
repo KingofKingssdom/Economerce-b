@@ -1,8 +1,7 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.ProductDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductResponseDTO;
-import com.caNhan.E_conomy.Entity.Product;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResProductDto;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.Impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,103 +20,110 @@ public class ProductController {
     public ProductController(ProductServiceImpl productService) {
         this.productService = productService;
     }
-    @PostMapping("/create")
-    private ResponseEntity<?> addProduct(@ModelAttribute ProductDTO productDTO)  {
-       ProductResponseDTO product = productService.create(productDTO);
+    @PostMapping
+    private ResponseEntity<?> create(@ModelAttribute ReqProductDto reqProductDto)  {
+       ResProductDto resProductDto = productService.createProduct(reqProductDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Tạo sản phẩm thành công",
-                product
+                "Data created successfully",
+                resProductDto
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping("/search/all")
-    private ResponseEntity<?> getAllProduct(@RequestParam (defaultValue = "0") int pageNumber,
-                                            @RequestParam (defaultValue = "8") int pageSize){
-        Page<ProductResponseDTO> products = productService.readAll(pageNumber, pageSize);
+    @GetMapping
+    private ResponseEntity<?> getAll(){
+        List<ResProductDto> resProductDtoList = productService.getAllProduct();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy toàn bộ sản phẩm thành công",
-                products
+                "Data retrieved successfully",
+                resProductDtoList
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping("/search")
-    private ResponseEntity<?> searchById(@RequestParam(name = "productId")Long productId){
-        ProductResponseDTO productResponseDTO = productService.readById(productId);
+    @GetMapping("/productCode/{productCode}")
+    private ResponseEntity<?> getByProductCode(@PathVariable String productCode){
+        ResProductDto resProductDto = productService.getProductByProductCode(productCode);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy sản phẩm theo id thanh công",
-                productResponseDTO
+                "Data retrieved successfully",
+                resProductDto
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @PutMapping("/update")
-    private ResponseEntity<?> update(@RequestParam(name = "productId") Long productId,
-                                     @ModelAttribute ProductDTO productDTO){
-        ProductResponseDTO productResponseDTO = productService.update(productId, productDTO);
+    @PutMapping("/{productId}")
+    private ResponseEntity<?> update(@PathVariable long productId,
+                                     @ModelAttribute ReqProductDto reqProductDto){
+        ResProductDto resProductDto = productService.updateProduct(productId, reqProductDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Cập nhập sản phẩm thành cong",
-                productResponseDTO
+                resProductDto
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping("/search/category")
-    private ResponseEntity<?> getByCategoryId(@RequestParam(value = "categoryId") Long categoryId,
-                                              @RequestParam(defaultValue = "0") int pageNumber,
-                                              @RequestParam(defaultValue = "8") int pageSize){
-        Page<ProductResponseDTO> products = productService.readByCategory(categoryId, pageNumber, pageSize);
+    @GetMapping("/categoryId/{categoryId}")
+    private ResponseEntity<?> getByCategoryId(@PathVariable long categoryId){
+        List<ResProductDto> resProductDtoList = productService.getAllProductByCategory(categoryId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy sản phẩm theo danh mục thành công",
-                products
+                "Data retrieved successfully",
+                resProductDtoList
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping("/get/category/brand")
-    private ResponseEntity<?> getProductByCategoryIdAndBrandId(@RequestParam(value = "categoryId") Long categoryId,
-                                                               @RequestParam(value = "brandId") Long brandId,
-                                                               @RequestParam(defaultValue = "0") int pageNumber,
-                                                               @RequestParam(defaultValue = "8") int pageSize) {
-      Page<ProductResponseDTO> productResponseDTOS = productService.readByCategoryAndBrand(categoryId, brandId, pageNumber, pageSize);
-      ResponseData responseData = new ResponseData(
-              HttpStatus.OK.value(),
-              "Lấy sản phẩm theo danh mục và nhãn hiệu thành công",
-              productResponseDTOS
-      );
-      return ResponseEntity.ok(responseData);
-    }
+//    @GetMapping("/get/category/brand")
+//    private ResponseEntity<?> getProductByCategoryIdAndBrandId(@RequestParam(value = "categoryId") Long categoryId,
+//                                                               @RequestParam(value = "brandId") Long brandId,
+//                                                               @RequestParam(defaultValue = "0") int pageNumber,
+//                                                               @RequestParam(defaultValue = "8") int pageSize) {
+//      Page<ResProductDto> productResponseDTOS = productService.readByCategoryAndBrand(categoryId, brandId, pageNumber, pageSize);
+//      ResponseData responseData = new ResponseData(
+//              HttpStatus.OK.value(),
+//              "Lấy sản phẩm theo danh mục và nhãn hiệu thành công",
+//              productResponseDTOS
+//      );
+//      return ResponseEntity.ok(responseData);
+//    }
 
-    @GetMapping("/search/featured")
-    private ResponseEntity<?> readAllByFeatured (@RequestParam (name = "featured") boolean featured) {
-        List<ProductResponseDTO> productResponseDTOS = productService.readAllByFeatured(featured);
+    @GetMapping("/feature")
+    private ResponseEntity<?> getAllByFeatured (@RequestParam (name = "featured") boolean featured) {
+        List<ResProductDto> resProductDtoList = productService.getAllProductByFeatured(featured);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy sản phẩm theo nôi bật thành công",
-                productResponseDTOS
+                "Data retrieved successfully",
+                resProductDtoList
         );
         return  ResponseEntity.ok(responseData);
     }
-    @GetMapping("/search/promotional")
-    private ResponseEntity<?> readAllByPromotionalAndCategory (@RequestParam (name = "promotional") boolean promotional,
-                                                               @RequestParam(name = "categoryId") Long categoryId) {
-        List<ProductResponseDTO> productResponseDTOS = productService.readAllByPromotionalAndCategory(promotional, categoryId);
+    @GetMapping("/promotional")
+    private ResponseEntity<?> readAllByPromotionalAndCategory (@RequestParam (name = "promotional") boolean promotional) {
+        List<ResProductDto> resProductDtoList = productService.getAllByPromotional(promotional);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy sản phẩm theo nôi bật thành công",
-                productResponseDTOS
+                "Data retrieved successfully",
+                resProductDtoList
         );
         return  ResponseEntity.ok(responseData);
     }
-    @GetMapping("/search/productName")
+    @GetMapping("/productName")
     private ResponseEntity<?> readAllByProductName (@RequestParam (name = "productName") String productName){
-        List<ProductResponseDTO> productResponseDTOS = productService.readByProductName(productName);
+        List<ResProductDto> resProductDtoList = productService.getProductByProductName(productName);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy sản phẩm theo tên thành công",
-                productResponseDTOS
+                "Data retrieved successfully",
+                resProductDtoList
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @GetMapping("/category-brand")
+    private  ResponseEntity<?> getByCategoryAndBrand(@RequestParam(name = "categoryId")long categoryId,
+                                                     @RequestParam(name = "brandId") long brandId){
+        List<ResProductDto> resProductDtoList = productService.getAllProductByCategoryAndBrand(categoryId, brandId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data retrieved successfully",
+                resProductDtoList
         );
         return ResponseEntity.ok(responseData);
     }

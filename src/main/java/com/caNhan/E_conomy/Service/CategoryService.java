@@ -11,5 +11,5 @@ public interface CategoryService {
     List<ResCategoryDto> getAllCategory();
     ResCategoryDto updateCategory(Long categoryId, ReqCategoryDto categoryDto);
     ResCategoryDto getCategoryByCategoryCode(String categoryCode);
-    void deleteCategory(Long categoryId);
+    void deleteCategory(long categoryId);
 }

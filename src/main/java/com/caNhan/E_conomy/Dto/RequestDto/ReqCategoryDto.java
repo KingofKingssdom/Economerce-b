@@ -3,7 +3,6 @@ package com.caNhan.E_conomy.Dto.RequestDto;
 public class ReqCategoryDto {
     private String categoryCode;
     private String categoryName;
-
     public ReqCategoryDto() {
     }
 

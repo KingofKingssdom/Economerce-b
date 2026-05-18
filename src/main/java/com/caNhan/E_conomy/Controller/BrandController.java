@@ -1,6 +1,7 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.BrandDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqBrandDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResBrandDto;
 import com.caNhan.E_conomy.Entity.Brand;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.Impl.BrandServiceImpl;
@@ -21,49 +22,68 @@ public class BrandController {
         this.brandService = brandService;
 
     }
-    @PostMapping("/create")
-    public ResponseEntity<?> addBrand (@ModelAttribute BrandDTO brandDTO) {
-        Brand brand = brandService.create(brandDTO);
+    @PostMapping
+    public ResponseEntity<?> create (@ModelAttribute ReqBrandDto reqBrandDto) {
+        ResBrandDto resBrandDto = brandService.createBrand(reqBrandDto);
         ResponseData responseData = new ResponseData<>(
                 HttpStatus.OK.value(),
-                "Tạo nhãn hieu thành công",
-                brand);
+                "Data created successfully",
+                resBrandDto);
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/search/all")
-    private ResponseEntity<?> getAllBrand () {
-        List<Brand> brand = brandService.realAll();
+    @GetMapping
+    private ResponseEntity<?> getAll () {
+        List<ResBrandDto> resBrandDtoList = brandService.getAllBrand();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy toàn bộ nhãn hiệu thành công",
-                brand
+                "Data retrieved successfully",
+                resBrandDtoList
         );
         return  ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/get/category")
-    private ResponseEntity<?> getBrandByCategory(@RequestParam(name = "categoryId") Long categoryId) {
-        List<Brand> brands = brandService.readByCategoryId(categoryId);
+    @GetMapping("/brandCode/{brandCode}")
+    public ResponseEntity<?> getByBrandCode(@PathVariable String brandCode){
+        ResBrandDto resBrandDto = brandService.getBrandByBrandCode(brandCode);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy nhãn hàng theo danh mục thành công",
-                brands
+                "Data retrieved successfully",
+                resBrandDto
+        );
+        return  ResponseEntity.ok(responseData);
+    }
+    @GetMapping("categoryId/{categoryId}")
+    public ResponseEntity<?> getByCategoryId(@PathVariable long categoryId){
+        List<ResBrandDto> resBrandDtoList = brandService.getAllBrandByCategoryId(categoryId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data retrieved successfully",
+                resBrandDtoList
+        );
+        return  ResponseEntity.ok(responseData);
+    }
+    @PutMapping("/{brandId}")
+    private ResponseEntity<?> update(@PathVariable Long brandId,
+                                          @ModelAttribute ReqBrandDto reqBrandDto){
+        ResBrandDto resBrandDto = brandService.updateBrand(brandId,reqBrandDto);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data updated successfully",
+                resBrandDto
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @DeleteMapping("/{brandId}")
+    public ResponseEntity<?> delete(@PathVariable long brandId){
+        brandService.deleteBrand(brandId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data deleted successfully"
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @PutMapping("/update")
-    private ResponseEntity<?> updateBrand(@RequestParam(name = "brandId") Long brandId,
-                                          @ModelAttribute BrandDTO brandDTO){
-        Brand brand = brandService.update(brandId, brandDTO);
-        ResponseData responseData = new ResponseData(
-                HttpStatus.OK.value(),
-                "Cập nhập nhãn hiệu thành công",
-                brand
-        );
-        return ResponseEntity.ok(brand);
-    }
 
 
 }

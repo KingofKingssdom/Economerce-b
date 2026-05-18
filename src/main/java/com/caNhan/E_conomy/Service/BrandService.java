@@ -1,15 +1,17 @@
 package com.caNhan.E_conomy.Service;
 
-import com.caNhan.E_conomy.Dto.BrandDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.BrandResponseDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqBrandDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResBrandDto;
 import com.caNhan.E_conomy.Entity.Brand;
 
 import java.util.List;
 
 public interface BrandService {
-    Brand create(BrandDTO brandDTO);
-    List<Brand> realAll();
-    List<Brand> readByCategoryId(Long categoryId);
-    Brand update(Long brandId, BrandDTO brandDTO);
+    ResBrandDto createBrand(ReqBrandDto brandDto);
+    List<ResBrandDto> getAllBrand();
+    ResBrandDto getBrandByBrandCode(String brandCode);
+    ResBrandDto updateBrand(Long brandId, ReqBrandDto brandDto);
+    void deleteBrand(long brandId);
+    List<ResBrandDto> getAllBrandByCategoryId(long categoryId);
 
 }

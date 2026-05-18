@@ -1,25 +1,16 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.RequestDto;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public class BrandDTO {
-    private Long id;
+public class ReqBrandDto {
     private String brandName;
+    private String brandCode;
     private MultipartFile urlImageBrand;
-    private List<Long> categoryId;
-    public BrandDTO() {
+    private List<Long> categoryIds;
+    public ReqBrandDto() {
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getBrandName() {
         return brandName;
     }
@@ -36,11 +27,19 @@ public class BrandDTO {
         this.urlImageBrand = urlImageBrand;
     }
 
-    public List<Long> getCategoryId() {
-        return categoryId;
+    public List<Long> getCategoryIds() {
+        return categoryIds;
     }
 
-    public void setCategoryId(List<Long> categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryIds(List<Long> categoryIds) {
+        this.categoryIds = categoryIds;
+    }
+
+    public String getBrandCode() {
+        return brandCode;
+    }
+
+    public void setBrandCode(String brandCode) {
+        this.brandCode = brandCode;
     }
 }

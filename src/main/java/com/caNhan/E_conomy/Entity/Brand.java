@@ -11,6 +11,8 @@ public class Brand {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "brand_code")
+    private String brandCode;
     @Column(name = "brand_name")
     private String  brandName;
     @Column(name = "url_image_brand")
@@ -60,4 +62,11 @@ public class Brand {
         this.categories = categories;
     }
 
+    public String getBrandCode() {
+        return brandCode;
+    }
+
+    public void setBrandCode(String brandCode) {
+        this.brandCode = brandCode;
+    }
 }

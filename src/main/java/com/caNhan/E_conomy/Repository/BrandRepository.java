@@ -11,10 +11,12 @@ import java.util.Optional;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand,Long> {
+    Optional<Brand> findBrandByBrandCode (String brandCode);
     Optional<Brand> findByBrandName(String brandName);
     @Query(value = "SELECT b" +
             " FROM Brand b" +
             " JOIN b.categories c" +
             " WHERE c.id = :categoryId")
-    List<Brand> findBrandByCategories (@Param("categoryId") Long categoryId);
+    List<Brand> findBrandByCategories (@Param("categoryId") long categoryId);
+
 }

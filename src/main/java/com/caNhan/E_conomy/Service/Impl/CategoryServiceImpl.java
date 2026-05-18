@@ -80,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long categoryId) {
+    public void deleteCategory(long categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new NoSuchCustomerExistsException("Category not found with id " + categoryId);
         }

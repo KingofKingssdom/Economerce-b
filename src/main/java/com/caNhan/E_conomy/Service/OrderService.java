@@ -18,7 +18,7 @@ public interface OrderService {
     ResOrderDto cancelOrderByOrderId (Long orderId);
     List<ResOrderDto> getAllOrder();
     Long countOrder();
-    double sumPriceOrder(OrderStatus orderStatus);
-    List<ResOrderDto> getOrderByOrderStatus(OrderStatus orderStatus);
+    double sumPriceOrder();
+//    List<ResOrderDto> getOrderByOrderStatus(OrderStatus orderStatus);
 
 }

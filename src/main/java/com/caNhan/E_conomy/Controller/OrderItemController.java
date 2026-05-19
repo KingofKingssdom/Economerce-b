@@ -1,6 +1,6 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.ResponseDto.OrderItemResponseDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResOrderItemDto;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,12 @@ public class OrderItemController {
     public OrderItemController(OrderItemService orderItemService) {
         this.orderItemService = orderItemService;
     }
-    @GetMapping("/all")
-    private ResponseEntity<?> findByOrderId(@RequestParam(name = "orderId") Long orderId){
-        List<OrderItemResponseDTO> orderItems = orderItemService.findOrderItemByOrder(orderId);
+    @GetMapping("/{orderId}")
+    private ResponseEntity<?> findByOrderId(@PathVariable Long orderId){
+        List<ResOrderItemDto> orderItems = orderItemService.getAllOrderItemsByOrderId(orderId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy toàn bộ chi tiết đơn hàng theo mã đơn hàng thành công",
+                "Data retrieved successfully",
                 orderItems
         );
         return ResponseEntity.ok(responseData);

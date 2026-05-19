@@ -1,7 +1,7 @@
 package com.caNhan.E_conomy.Service.Impl;
 
 import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
-import com.caNhan.E_conomy.Dto.ResponseDto.OrderItemResponseDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResOrderItemDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
 import com.caNhan.E_conomy.Entity.OrderItem;
 import com.caNhan.E_conomy.Repository.OrderItemRepository;
@@ -23,25 +23,11 @@ public class OrderItemServiceImpl implements OrderItemService {
         this.modelMapper = modelMapper;
     }
     @Override
-    public List<OrderItemResponseDTO> findOrderItemByOrder(Long orderId) {
+    public List<ResOrderItemDto> getAllOrderItemsByOrderId(Long orderId) {
         List<OrderItem> orderItems = orderItemRepository.findOrderItemByOrder_Id(orderId);
-
-        return orderItems.stream()
-                .map(orderItem -> {
-                    OrderItemResponseDTO dto = modelMapper.map(orderItem, OrderItemResponseDTO.class);
-
-                    if (orderItem.getProduct() != null) {
-                        dto.setProductName(orderItem.getProduct().getProductName());
-                    }
-                    if (orderItem.getProductColor() != null) {
-                        dto.setProductColor(modelMapper.map(orderItem.getProductColor(), ProductColorResponseDTO.class));
-                    }
-                    if (orderItem.getProductVariant() != null) {
-                        dto.setProductVariant(modelMapper.map(orderItem.getProductVariant(), ReqProductVariantDto.class));
-                    }
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<ResOrderItemDto> resOrderItemDtos = orderItems.stream()
+                .map(orderItem -> modelMapper.map(orderItem, ResOrderItemDto.class))
+                .toList();
+        return resOrderItemDtos;
     }
 }

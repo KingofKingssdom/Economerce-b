@@ -75,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setQuantity(cartItem.getQuantity());
 
             double currentPrice = cartItem.getProductVariant().getCurrentPrice();
-            orderItem.setPriceBuy(currentPrice);
+         orderItem.setPriceAtTime(currentPrice);
 
 
             totalPrice += currentPrice * cartItem.getQuantity();
@@ -137,55 +137,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDTOU> findAllOrders() {
-        List<Order> orders = orderRepository.findAllOrder();
+    public Long countOrder() {
+        Long count = orderRepository.countAllOrderStatus(OrderStatus.CONFIRMED);
+        return  count;
 
-        return orders.stream().map(order -> {
-            OrderResponseDTOU dto = new OrderResponseDTOU();
-
-            // Gán trực tiếp các trường trong Order
-            dto.setId(order.getId());
-            dto.setDayCreate(order.getDayCreate());
-            dto.setStatus(order.getStatus() != null ? order.getStatus().name() : null);
-            dto.setPaymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null);
-            dto.setPaymentStatus(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null);
-            dto.setTotalPrice(order.getTotalPrice());
-            dto.setOrderName(order.getOrderName());
-
-            // Gán thông tin User nếu có
-            if (order.getUser() != null) {
-                dto.setFullName(order.getUser().getFullName());
-                dto.setPhoneNumber(order.getUser().getPhoneNumber());
-                dto.setEmail(order.getUser().getEmail());
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
     }
 
     @Override
-    public ResOrderDto updateOrderPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException(" Không tìm thấy đơn hàng theo id " + orderId));
-        if(paymentStatus != null){
-            order.setDayCreate(LocalDateTime.now());
-            order.setPaymentStatus(paymentStatus);
-        }
-        Order update = orderRepository.save(order);
-        return modelMapper.map(update, ResOrderDto.class);
+    public double sumPriceOrder() {
+        double sum = orderRepository.sumPriceAllOrder(OrderStatus.CONFIRMED);
+        return  sum;
     }
 
-    @Override
-    public List<ResOrderDto> findAllOrdersByStatus(OrderStatus orderStatus) {
-        List<Order> orders = orderRepository.findOrderByStatus(orderStatus);
 
-        return orders.stream()
-                .map(order -> modelMapper.map(order, ResOrderDto.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<OrderCountStatusResponseDTO> countByStatus() {
-        return orderRepository.countByStatus();
-    }
 }

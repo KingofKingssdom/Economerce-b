@@ -29,130 +29,104 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
-    @PostMapping("/create")
-    private ResponseEntity<?> checkout(@RequestBody ReqOrderDto orderDTO){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-        Long userId = customUserDetail.getId();
-        ResOrderDto order = orderService.create(userId,orderDTO.getCartItemIds());
+    @PostMapping("/{userId}")
+    private ResponseEntity<?> checkout(@PathVariable (name = "userId") Long userId,
+            @ModelAttribute ReqOrderDto reqOrderDto){
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+//        Long userId = customUserDetail.getId();
+        ResOrderDto order = orderService.createOrder(userId,reqOrderDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Tạo đơn hàng thành công",
+                "Data created successfully",
                 order
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/all")
-    private ResponseEntity<?> getAllOrderByUser(){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-        Long userId = customUserDetail.getId();
-        List<ResOrderDto> orderResponse = orderService.findOrderByUser(userId);
+    @GetMapping("/user/{userId}")
+    private ResponseEntity<?> getAllByUser(@PathVariable(name = "userId") Long userId){
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+//        Long userId = customUserDetail.getId();
+        List<ResOrderDto> orderResponse = orderService.getAllOrderByUser(userId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy toàn bộ đơn hàng theo user thành công",
+                "Data retrieved successfully",
                 orderResponse
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @PutMapping("/update")
-    private ResponseEntity<?> updateOrderStatus (@RequestParam (name = "orderId") Long orderId,
-                                                 @RequestParam (name = "status")OrderStatus status) {
-        ResOrderDto orderResponseDTO = orderService.updateOrderStatus(orderId, status);
+    @PutMapping("/{orderId}")
+    private ResponseEntity<?> update (@PathVariable Long orderId,
+                                      @RequestParam (name = "status")OrderStatus status) {
+        ResOrderDto resOrderDto = orderService.updateOrderByOrderStatus(orderId, status);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Cập nhập trạng thái giao hàng thành công",
-                orderResponseDTO
+                "Data updated successfully",
+                resOrderDto
         );
         return ResponseEntity.ok(responseData);
     }
-    @PutMapping("/update/payment")
-    private ResponseEntity<?> updateOrderByPaymentMethodAndPaymentStatus (
-            @RequestParam (name = "orderId") Long orderId,
-            @RequestParam (name = "paymentMethod") PaymentMethod paymentMethod,
-            @RequestParam (name = "paymentStatus")PaymentStatus paymentStatus) {
-        ResOrderDto orderResponseDTO = orderService.
-                updateOrderByPaymentMethodAndPaymentStatus(orderId, paymentMethod, paymentStatus);
+//    @PutMapping("/update/payment")
+//    private ResponseEntity<?> updateOrderByPaymentMethodAndPaymentStatus (
+//            @RequestParam (name = "orderId") Long orderId,
+//            @RequestParam (name = "paymentMethod") PaymentMethod paymentMethod,
+//            @RequestParam (name = "paymentStatus")PaymentStatus paymentStatus) {
+//        ResOrderDto orderResponseDTO = orderService.
+//                updateOrderByPaymentMethodAndPaymentStatus(orderId, paymentMethod, paymentStatus);
+//        ResponseData responseData = new ResponseData(
+//                HttpStatus.OK.value(),
+//                "Cập nhập trạng thái đơn hàng thành công",
+//                orderResponseDTO
+//        );
+//        return ResponseEntity.ok(responseData);
+//    }
+    @PutMapping("/{orderId}/cancel")
+    private ResponseEntity<?> cancelOrder(@PathVariable Long orderId) {
+        ResOrderDto resOrderDto = orderService.cancelOrderByOrderId(orderId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Cập nhập trạng thái đơn hàng thành công",
-                orderResponseDTO
-        );
-        return ResponseEntity.ok(responseData);
-    }
-    @GetMapping("/search")
-    private ResponseEntity<?> getOrderById(@RequestParam(name = "orderId") Long orderId) {
-        ResOrderDto orderResponseDTO = orderService.findOrderById(orderId);
-        ResponseData responseData = new ResponseData(
-                HttpStatus.OK.value(),
-                "Tìm đơn hàng theo id thanh công",
-                orderResponseDTO
-        );
-        return ResponseEntity.ok(responseData);
-    }
-
-    @PutMapping("/delete")
-    private ResponseEntity<?> deleteOrder (@RequestParam (name = "orderId") Long orderId,
-                                           @RequestParam (name = "status")OrderStatus status) {
-        ResOrderDto orderResponseDTO = orderService.deleteOrder(orderId, status);
-        ResponseData responseData = new ResponseData(
-                HttpStatus.OK.value(),
-                "Cập nhập trạng thái giao hàng thành công",
-                orderResponseDTO
+                "Data updated successfully",
+                resOrderDto
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/search/all")
-    private ResponseEntity<?> findAllOrder(){
-        List<OrderResponseDTOU> orderResponseDTO = orderService.findAllOrders();
+
+    @GetMapping
+    private ResponseEntity<?> getAll(){
+        List<ResOrderDto> resOrderDtoList = orderService.getAllOrder();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lây toàn bộ đơn hàng thanh công",
-                orderResponseDTO
+                "Data retrieved successfully",
+                resOrderDtoList
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @PutMapping("/update/paymentStatus")
-    private ResponseEntity<?> updateOrderByPPaymentStatus (
-            @RequestParam (name = "orderId") Long orderId,
-            @RequestParam (name = "paymentStatus")PaymentStatus paymentStatus) {
-        ResOrderDto orderResponseDTO = orderService.
-                updateOrderPaymentStatus(orderId, paymentStatus);
+    @GetMapping("/count")
+    private ResponseEntity<?> countOrder () {
+        Long count =
+                orderService.countOrder();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Cập nhập trạng thái đơn hàng thành công",
-                orderResponseDTO
+                "Data retrieved successfully",
+                count
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/search/orderStatus")
-    private ResponseEntity<?> getOrderByOrderStatus (
-            @RequestParam("orderStatus") OrderStatus orderStatus) {
-        List<ResOrderDto> orderResponseDTOS =
-                orderService.findAllOrdersByStatus(orderStatus);
-        ResponseData responseData = new ResponseData(
-                HttpStatus.OK.value(),
-                "Láy đơn hàng thành công",
-                orderResponseDTOS
-        );
-        return ResponseEntity.ok(responseData);
-    }
-
-    @GetMapping("/search/countOrder")
+    @GetMapping("/sum-prices")
     private ResponseEntity<?> countOrderStatus(){
-        List<OrderCountStatusResponseDTO> orderCountStatusResponseDTOS
-                = orderService.countByStatus();
+        double sum = orderService.sumPriceOrder();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Đếm toàn bộ trạng thái đơn hàng thành công",
-                orderCountStatusResponseDTOS);
+                "Data retrieved successfully",
+                sum);
         return  ResponseEntity.ok(responseData);
     }
 }

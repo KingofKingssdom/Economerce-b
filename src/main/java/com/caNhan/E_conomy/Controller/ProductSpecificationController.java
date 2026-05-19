@@ -1,8 +1,8 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.ProductSpecificationDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductSpecificationResponseDTO;
-import com.caNhan.E_conomy.Entity.ProductSpecification;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqBindSpecificationProductsDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductSpecificationDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResProductSpecificationDto;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.ProductSpecificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +20,62 @@ public class ProductSpecificationController {
     public ProductSpecificationController(ProductSpecificationService productSpecificationService) {
         this.productSpecificationService = productSpecificationService;
     }
-    @PostMapping("/create")
-    public ResponseEntity<?> addProductSpecification (@ModelAttribute ProductSpecificationDTO productSpecificationDTO){
-        ProductSpecificationResponseDTO responseDTO = productSpecificationService.create(productSpecificationDTO);
+    @PostMapping
+    private ResponseEntity<?> create (@ModelAttribute ReqProductSpecificationDto reqProductSpecificationDto){
+        ResProductSpecificationDto resProductSpecificationDto = productSpecificationService
+                .createProductSpecification(reqProductSpecificationDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Tạo thông số sản phẩm  thành công",
-                responseDTO
+                "Data created successfully",
+                resProductSpecificationDto
         );
         return ResponseEntity.ok(responseData);
     }
 
-    @GetMapping("/search")
-    private ResponseEntity<?> getProductSpecificationByProductId(@RequestParam(name = "productId") Long productId) {
-        List<ProductSpecificationResponseDTO> specificationResponseDTOS  = productSpecificationService.findByProductId(productId);
+    @GetMapping
+    private ResponseEntity<?> getAll() {
+        List<ResProductSpecificationDto> resProductSpecificationDtoList  =
+                productSpecificationService.getAllProductSpecification();
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy thông số theo id sản phẩm thành công",
-                specificationResponseDTOS
+                "Data retrieved successfully",
+                resProductSpecificationDtoList
         );
         return  ResponseEntity.ok(responseData);
     }
+
+    @PutMapping("/{productSpecificationId}")
+    private ResponseEntity<?> update(@PathVariable Long productSpecificationId,
+                                     @ModelAttribute ReqProductSpecificationDto reqProductSpecificationDto){
+        ResProductSpecificationDto resProductSpecificationDto = productSpecificationService
+                .updateProductSpecification(productSpecificationId, reqProductSpecificationDto);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data updated successfully",
+                resProductSpecificationDto
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @DeleteMapping("/{productSpecificationId}")
+    private ResponseEntity<?> delete (@PathVariable Long productSpecificationId){
+        productSpecificationService.deleteProductSpecification(productSpecificationId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data updated successfully"
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @PostMapping("/bind-products")
+    public ResponseEntity<?> bindProducts(
+            @ModelAttribute ReqBindSpecificationProductsDto dto) {
+        ResProductSpecificationDto result = productSpecificationService.createProductsToSpecification(dto);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data created successfully",
+                result
+        );
+        return ResponseEntity.ok(responseData);
+    }
+
 
 }

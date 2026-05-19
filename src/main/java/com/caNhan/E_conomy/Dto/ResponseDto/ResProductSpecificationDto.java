@@ -1,16 +1,14 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import com.caNhan.E_conomy.Dto.SpecificationDetailDTO;
-import com.caNhan.E_conomy.Entity.SpecificationDetail;
-import com.caNhan.E_conomy.Service.SpecificationDetailService;
+import com.caNhan.E_conomy.Dto.RequestDto.SpecificationDetailDTO;
 
 import java.util.List;
 
-public class ProductSpecificationResponseDTO {
+public class ResProductSpecificationDto {
     private Long id;
     private String nameSpecification;
     private List<SpecificationDetailDTO> specificationDetails;
-    public ProductSpecificationResponseDTO() {
+    public ResProductSpecificationDto() {
     }
 
     public Long getId() {

@@ -1,9 +1,11 @@
 package com.caNhan.E_conomy.Service.Impl;
 
-import com.caNhan.E_conomy.Dto.ProductSpecificationDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductSpecificationResponseDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqBindSpecificationProductsDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqProductSpecificationDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResProductSpecificationDto;
 import com.caNhan.E_conomy.Entity.Product;
 import com.caNhan.E_conomy.Entity.ProductSpecification;
+import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
 import com.caNhan.E_conomy.Repository.ProductRepository;
 import com.caNhan.E_conomy.Repository.ProductSpecificationRepository;
 import com.caNhan.E_conomy.Service.ProductSpecificationService;
@@ -31,30 +33,62 @@ public class ProductSpecificationServiceImpl implements ProductSpecificationServ
     }
 
     @Override
-    public ProductSpecificationResponseDTO create(ProductSpecificationDTO productSpecificationDTO) {
-        Optional<ProductSpecification> productSpecificationOptional =
-                productSpecificationRepository.findByNameSpecification(productSpecificationDTO.getNameSpecification());
-        ProductSpecification specification;
-        if(productSpecificationOptional.isPresent()) {
-            specification = productSpecificationOptional.get();
-        }
-        else {
-            specification = new ProductSpecification();
-            specification.setNameSpecification(productSpecificationDTO.getNameSpecification());
-            specification.setProducts(new ArrayList<>());
-        }
-        List<Product> productIds = productRepository.findAllById(productSpecificationDTO.getProductId());
-        specification.getProducts().addAll(productIds);
-       ProductSpecification saveSpecification = productSpecificationRepository.save(specification);
-       return  modelMapper.map(saveSpecification, ProductSpecificationResponseDTO.class);
+    public ResProductSpecificationDto createProductSpecification(ReqProductSpecificationDto reqProductSpecificationDto) {
+        ProductSpecification productSpecification = new ProductSpecification();
+        productSpecification.setNameSpecification(reqProductSpecificationDto.getNameSpecification());
+        ProductSpecification saveSpecification = productSpecificationRepository.save(productSpecification);
+       return  modelMapper.map(saveSpecification, ResProductSpecificationDto.class);
     }
 
     @Override
-    public List<ProductSpecificationResponseDTO> findByProductId(Long productId) {
-        List<ProductSpecification>
-                productSpecs = productSpecificationRepository.findByProducts_Id(productId);
-        return productSpecs.stream()
-                .map(productSpec ->modelMapper.map(productSpec, ProductSpecificationResponseDTO.class))
-                .toList();
+    public List<ResProductSpecificationDto> getAllProductSpecification() {
+        List<ProductSpecification> productSpecificationList = productSpecificationRepository.findAll();
+        List<ResProductSpecificationDto> resProductSpecificationDtoList =
+                productSpecificationList.stream()
+                        .map(productSpecification -> modelMapper.map(productSpecification, ResProductSpecificationDto.class))
+                        .toList();
+        return resProductSpecificationDtoList;
     }
+
+    @Override
+    public ResProductSpecificationDto updateProductSpecification(Long id, ReqProductSpecificationDto reqProductSpecificationDto) {
+        ProductSpecification productSpecification =
+                productSpecificationRepository.findById(id)
+                        .orElseThrow(() -> new NoSuchCustomerExistsException("Product specification not found with id " + id));
+        productSpecification.setNameSpecification(reqProductSpecificationDto.getNameSpecification());
+        ProductSpecification saveProductSpecification = productSpecificationRepository.save(productSpecification);
+        return modelMapper.map(saveProductSpecification, ResProductSpecificationDto.class);
+    }
+
+    @Override
+    public void deleteProductSpecification(Long id) {
+        ProductSpecification productSpecification =
+                productSpecificationRepository.findById(id)
+                        .orElseThrow(() -> new NoSuchCustomerExistsException("Product specification not found with id " + id));
+        productSpecificationRepository.delete(productSpecification);
+    }
+
+    @Override
+    public ResProductSpecificationDto createProductsToSpecification(ReqBindSpecificationProductsDto dto) {
+        ProductSpecification productSpecification = productSpecificationRepository.findById(dto.getSpecificationId())
+                .orElseThrow(() -> new RuntimeException("Product specification not found with id " + dto.getSpecificationId()));
+        List<Product> newProductsToConnect = productRepository.findAllById(dto.getProductIds());
+        if (newProductsToConnect.isEmpty()) {
+            throw new RuntimeException("Product not found ");
+        }
+        List<Product> currentProducts = productSpecification.getProducts();
+        if (currentProducts == null) {
+            currentProducts = new ArrayList<>();
+        }
+        for (Product product : newProductsToConnect) {
+            if (!currentProducts.contains(product)) {
+                currentProducts.add(product);
+            }
+        }
+        productSpecification.setProducts(currentProducts);
+        ProductSpecification updatedSpec = productSpecificationRepository.save(productSpecification);
+        return modelMapper.map(updatedSpec, ResProductSpecificationDto.class);
+    }
+
+
 }

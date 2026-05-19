@@ -1,4 +1,4 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.RequestDto;
 
 public class Login {
     private String phoneNumber;

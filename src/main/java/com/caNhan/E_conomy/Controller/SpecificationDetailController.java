@@ -1,6 +1,6 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.SpecificationDetailDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.SpecificationDetailDTO;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.SpecificationDetailService;
 import org.springframework.beans.factory.annotation.Autowired;

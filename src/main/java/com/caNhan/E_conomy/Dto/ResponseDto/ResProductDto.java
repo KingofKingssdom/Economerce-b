@@ -11,7 +11,7 @@ public class ResProductDto {
     private String description;
     private String urlPhotoProduct;
     private Long categoryId;
-    private List<ProductSpecificationResponseDTO> specifications;
+    private List<ResProductSpecificationDto> specifications;
     private List<ReqProductVariantDto> productVariants;
     private Long brandId;
     private boolean featured;
@@ -67,11 +67,11 @@ public class ResProductDto {
         this.categoryId = categoryId;
     }
 
-    public List<ProductSpecificationResponseDTO> getSpecifications() {
+    public List<ResProductSpecificationDto> getSpecifications() {
         return specifications;
     }
 
-    public void setSpecifications(List<ProductSpecificationResponseDTO> specifications) {
+    public void setSpecifications(List<ResProductSpecificationDto> specifications) {
         this.specifications = specifications;
     }
 

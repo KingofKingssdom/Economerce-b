@@ -1,7 +1,7 @@
 package com.caNhan.E_conomy.Service.Impl;
 
 
-import com.caNhan.E_conomy.Dto.SpecificationDetailDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.SpecificationDetailDTO;
 import com.caNhan.E_conomy.Entity.Product;
 import com.caNhan.E_conomy.Entity.ProductSpecification;
 import com.caNhan.E_conomy.Entity.SpecificationDetail;

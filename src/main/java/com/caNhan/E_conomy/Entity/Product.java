@@ -33,8 +33,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
-    @OneToMany(mappedBy = "product")
-    private List<ProductColor> productColors;
     @ManyToMany(mappedBy = "products")
     private List<ProductSpecification> specifications;
     @OneToMany(mappedBy = "product")
@@ -90,14 +88,6 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
-    }
-
-    public List<ProductColor> getProductColors() {
-        return productColors;
-    }
-
-    public void setProductColors(List<ProductColor> productColors) {
-        this.productColors = productColors;
     }
 
     public List<ProductSpecification> getSpecifications() {

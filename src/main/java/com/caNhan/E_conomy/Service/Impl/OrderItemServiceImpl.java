@@ -1,8 +1,6 @@
 package com.caNhan.E_conomy.Service.Impl;
 
-import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.ResOrderItemDto;
-import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
 import com.caNhan.E_conomy.Entity.OrderItem;
 import com.caNhan.E_conomy.Repository.OrderItemRepository;
 import com.caNhan.E_conomy.Service.OrderItemService;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderItemServiceImpl implements OrderItemService {

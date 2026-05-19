@@ -2,30 +2,27 @@ package com.caNhan.E_conomy.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "cartItems")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "product_price")
-    private Double productPrice;
-    @Column(name = "category_id")
-    private Long categoryId;
+    @Column(name = "price_at_time")
+    private double priceAtTime;
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-    @ManyToOne
-    @JoinColumn(name = "product_color_id")
-    private ProductColor productColor;
     @ManyToOne
     @JoinColumn(name = "product_variant_id")
     private ProductVariant productVariant;
     private int quantity;
     private double totalPrice;
+    private Date createAt;
+    
+
     public Long getId() {
         return id;
     }
@@ -42,28 +39,12 @@ public class CartItem {
         this.cart = cart;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public int getQuantity() {
         return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public ProductColor getProductColor() {
-        return productColor;
-    }
-
-    public void setProductColor(ProductColor productColor) {
-        this.productColor = productColor;
     }
 
     public ProductVariant getProductVariant() {
@@ -74,14 +55,6 @@ public class CartItem {
         this.productVariant = productVariant;
     }
 
-    public Double getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(Double productPrice) {
-        this.productPrice = productPrice;
-    }
-
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -90,11 +63,19 @@ public class CartItem {
         this.totalPrice = totalPrice;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public double getPriceAtTime() {
+        return priceAtTime;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setPriceAtTime(double priceAtTime) {
+        this.priceAtTime = priceAtTime;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 }

@@ -30,7 +30,7 @@ public class ProductVariantController {
         return ResponseEntity.ok(responseData);
     }
     @GetMapping("/{productVariantId}")
-    private ResponseEntity<?> getById(long productVariantId){
+    private ResponseEntity<?> getById(@PathVariable long productVariantId){
         ResProductVariantDto resProductVariantDto = productVariantService.getProductVariantById(productVariantId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
@@ -49,7 +49,7 @@ public class ProductVariantController {
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping
+    @GetMapping("/product")
     private ResponseEntity<?> getByProductId(@RequestParam(name = "productId") long productId){
         List<ResProductVariantDto> resProductVariantDto = productVariantService.getAllProductVariantByProductId(productId);
         ResponseData responseData = new ResponseData(

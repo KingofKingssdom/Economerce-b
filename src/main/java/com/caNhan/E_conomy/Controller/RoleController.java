@@ -1,7 +1,7 @@
 package com.caNhan.E_conomy.Controller;
 
-import com.caNhan.E_conomy.Dto.ResponseDto.RoleResponseDTO;
-import com.caNhan.E_conomy.Dto.RoleDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResRoleDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqRoleDto;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ public class RoleController {
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
     }
-    @PostMapping("/create")
-    private ResponseEntity<?> create(@ModelAttribute RoleDTO roleDTO){
-        RoleResponseDTO responseDTO = roleService.create(roleDTO);
+    @PostMapping
+    private ResponseEntity<?> create(@ModelAttribute ReqRoleDto reqRoleDto){
+        ResRoleDto resRoleDto = roleService.createRole(reqRoleDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Tạo role thành công",
-                responseDTO
+                "Data created successfully",
+                resRoleDto
         );
         return ResponseEntity.ok(responseData);
     }

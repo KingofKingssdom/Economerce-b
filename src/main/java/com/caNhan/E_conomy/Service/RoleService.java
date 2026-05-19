@@ -1,9 +1,11 @@
 package com.caNhan.E_conomy.Service;
 
-import com.caNhan.E_conomy.Dto.ResponseDto.RoleResponseDTO;
-import com.caNhan.E_conomy.Dto.RoleDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResRoleDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqRoleDto;
+
+import java.util.List;
 
 public interface RoleService {
-    RoleResponseDTO create(RoleDTO roleDTO);
-    RoleResponseDTO readAll();
+    ResRoleDto createRole(ReqRoleDto reqRoleDto);
+    List<ResRoleDto> getAllRole();
 }

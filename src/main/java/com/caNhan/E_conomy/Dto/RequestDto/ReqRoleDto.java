@@ -1,9 +1,9 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.RequestDto;
 
-public class RoleDTO {
+public class ReqRoleDto {
     private String roleName;
 
-    public RoleDTO() {
+    public ReqRoleDto() {
     }
 
     public String getRoleName() {

@@ -1,16 +1,14 @@
-package com.caNhan.E_conomy.Dto;
+package com.caNhan.E_conomy.Dto.RequestDto;
 
 import java.util.List;
 
-public class UserDto {
+public class ReqUserDto {
     private String fullName;
     private String phoneNumber;
     private String email;
     private String password;
-    private List<Long> roleId;
-    public UserDto() {
+    public ReqUserDto() {
     }
-
     public String getFullName() {
         return fullName;
     }
@@ -25,14 +23,6 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Long> getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(List<Long> roleId) {
-        this.roleId = roleId;
     }
 
     public String getPassword() {

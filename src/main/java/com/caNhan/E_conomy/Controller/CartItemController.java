@@ -1,7 +1,8 @@
 package com.caNhan.E_conomy.Controller;
 
 import com.caNhan.E_conomy.Custom.CustomUserDetail;
-import com.caNhan.E_conomy.Dto.ResponseDto.CartItemResponseDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqCarItemDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResCartItemDto;
 import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.CartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,43 +23,61 @@ public class CartItemController {
     public CartItemController(CartItemService cartItemService) {
         this.cartItemService = cartItemService;
     }
-    @PostMapping("create")
-    private ResponseEntity<?> createCartItem(@RequestParam (name = "productId") Long productId,
-                                             @RequestParam (name = "productVariantId") Long productVariantId,
-                                             @RequestParam (name = "productColorId") Long productColorId){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-        Long userId = customUserDetail.getId();
-        CartItemResponseDTO cartItem = cartItemService.create(userId, productId ,productVariantId, productColorId);
+    @PostMapping
+    private ResponseEntity<?> create(ReqCarItemDto reqCarItemDto){
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+//        Long userId = customUserDetail.getId();
+        ResCartItemDto cartItem = cartItemService.createCartItem(reqCarItemDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Thêm sản phẩm vào đơn hàng thành công",
+                "Data created successfully",
                 cartItem
         );
         return ResponseEntity.ok(responseData);
     }
-    @GetMapping("/all")
-    private ResponseEntity<?> getCartItemByUser(){
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
-        Long userId = customUserDetail.getId();
-        List<CartItemResponseDTO> cartItem = cartItemService.findAllByCartId(userId);
+    @GetMapping("user/{userId}")
+    private ResponseEntity<?> getByUser(@PathVariable Long userId){
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+//        Long userId = customUserDetail.getId();
+        List<ResCartItemDto> cartItem = cartItemService.getCartItemByUserId(userId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Lấy toàn bộ hàng trong giỏ hàng thành công",
+                "Data retrieved successfully",
                 cartItem
         );
         return ResponseEntity.ok(responseData);
     }
-
-    @DeleteMapping("/delete")
-    private ResponseEntity<?> deleteById(@RequestParam(name = "cartItemId") Long cartItemId){
-        cartItemService.deleteByCartId(cartItemId);
+    @PutMapping("/{cartItemId}")
+    private ResponseEntity<?> update(@PathVariable Long cartItemId,
+                                     @RequestParam(name = "newQuantity") int newQuantity){
+        ResCartItemDto resCartItemDto = cartItemService.updateCartItemByQuantity(cartItemId, newQuantity);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
-                "Xóa món hàng ra khỏi giỏ hàng thành công"
+                "Data update successfully",
+                resCartItemDto
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @DeleteMapping("/user/{userId}/delete-items")
+    private ResponseEntity<?> deleteById(@RequestParam(name = "cartItemIds") List<Long> cartItemIds,
+                                         @PathVariable Long userId){
+        cartItemService.deleteCartItemById(cartItemIds, userId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data deleted successfully"
+        );
+        return ResponseEntity.ok(responseData);
+    }
+    @DeleteMapping("/user/{userId}")
+    private ResponseEntity<?> delete(@PathVariable Long userId){
+        cartItemService.deleteAllCartItem(userId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data deleted successfully"
         );
         return ResponseEntity.ok(responseData);
     }

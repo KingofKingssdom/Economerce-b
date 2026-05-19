@@ -1,7 +1,8 @@
 package com.caNhan.E_conomy.Service.Impl;
 
+import com.caNhan.E_conomy.Dto.RequestDto.ReqOrderDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderCountStatusResponseDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResOrderDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTOU;
 import com.caNhan.E_conomy.Entity.*;
 import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
@@ -14,13 +15,18 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    private final UserRepository userRepository;
     private OrderRepository orderRepository;
     private CartRepository cartRepository;
     private CartItemRepository cartItemRepository;
@@ -29,113 +35,105 @@ public class OrderServiceImpl implements OrderService {
     public OrderServiceImpl(OrderRepository orderRepository,
                             CartRepository cartRepository,
                             CartItemRepository cartItemRepository,
-                            ModelMapper modelMapper) {
+                            ModelMapper modelMapper, UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository =cartItemRepository;
         this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public OrderResponseDTO create(Long userId, List<Long> carItemIds) {
-        Cart cart = cartRepository.findCartByUserId(userId);
-        List<CartItem> selectedItems = cartItemRepository.findAllById(carItemIds);
+    public ResOrderDto createOrder(Long userId, ReqOrderDto reqOrderDto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchCustomerExistsException("User not found with id " + userId));
+        List<CartItem> selectedItems = cartItemRepository.findAllById(reqOrderDto.getSelectedCartItemIds());
         if (selectedItems.isEmpty()) {
-            throw new RuntimeException("Không có sản phẩm nào được chọn để đặt hàng");
+            throw new IllegalArgumentException("No items selected to create order.");
         }
-
+        Random rd = new Random();
+        int randomNumber = rd.nextInt(1000, 10000);
+        String ngayFormat = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         Order order = new Order();
-        order.setUser(cart.getUser());
+        order.setOrderCode(String.format("DH-%d-%s", randomNumber, ngayFormat));
         order.setStatus(OrderStatus.PENDING);
-        order.setPaymentMethod(PaymentMethod.COD);
-        order.setPaymentStatus(PaymentStatus.UNPAID);
+        order.setPaymentMethod(reqOrderDto.getPaymentMethod());
+        order.setPaymentStatus(reqOrderDto.getPaymentMethod() == PaymentMethod.COD ?
+                PaymentStatus.UNPAID : PaymentStatus.PAID);
+
         order.setDayCreate(LocalDateTime.now());
+        order.setReceiverName(reqOrderDto.getReceiverName());
+        order.setReceiverPhone(reqOrderDto.getReceiverPhone());
+        order.setShippingAddress(reqOrderDto.getShippingAddress());
         order.setOrderItems(new ArrayList<>());
 
         double totalPrice = 0.0;
-
         for (CartItem cartItem : selectedItems) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
-            orderItem.setProduct(cartItem.getProduct());
             orderItem.setProductVariant(cartItem.getProductVariant());
-            orderItem.setProductColor(cartItem.getProductColor());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPriceBuy(cartItem.getProductPrice());
-            orderItem.setCategoryId(cartItem.getCategoryId());
-            totalPrice += orderItem.getPriceBuy() * orderItem.getQuantity();
+
+            double currentPrice = cartItem.getProductVariant().getCurrentPrice();
+            orderItem.setPriceBuy(currentPrice);
+
+
+            totalPrice += currentPrice * cartItem.getQuantity();
 
             order.getOrderItems().add(orderItem);
         }
-        List<String> productNames = order.getOrderItems().stream()
-                .map(item -> item.getProduct().getProductName())
-                .toList();
-        String orderName = String.join(", ", productNames);
-        if (orderName.length() > 240) {
-            orderName = orderName.substring(0, 237) + "...";
-        }
-        order.setOrderName(orderName);
         order.setTotalPrice(totalPrice);
+
+
         Order savedOrder = orderRepository.save(order);
 
-        // Xóa các item đã đặt khỏi giỏ hàng
-        cart.getCartItems().removeIf(item -> carItemIds.contains(item.getId()));
-        cartRepository.save(cart);
 
-        return modelMapper.map(savedOrder, OrderResponseDTO.class);
+        cartItemRepository.deleteAll(selectedItems);
+
+        ResOrderDto resOrderDto = modelMapper.map(savedOrder, ResOrderDto.class);
+        resOrderDto.setUserId(userId); // ModelMapper có thể thiếu userId nếu Order không lưu trực tiếp userId, nên set tay cho chắc chắn
+
+        return resOrderDto;
     }
 
     @Override
-    public List<OrderResponseDTO> findOrderByUser(Long userId) {
-        List<Order> orders = orderRepository.findByUser_Id(userId);
-
-        return orders.stream()
-                .map(order -> modelMapper.map(order, OrderResponseDTO.class))
-                .collect(Collectors.toList());
+    public List<ResOrderDto> getAllOrderByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchCustomerExistsException("User not found with id " + userId));
+        List<Order> orderList = orderRepository.findByUserId(userId);
+        List<ResOrderDto> orderDtoList = orderList.stream().
+                map(order -> modelMapper.map(order, ResOrderDto.class))
+                .toList();
+        return  orderDtoList;
     }
 
     @Override
-    public OrderResponseDTO updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+    public ResOrderDto updateOrderByOrderStatus (Long orderId, OrderStatus newOrderStatus) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException(" Không tìm thấy đơn hàng theo id " + orderId));
-        if(orderStatus != null){
+                .orElseThrow(()-> new RuntimeException("Order not found with id " + orderId));
             order.setDayCreate(LocalDateTime.now());
-            order.setStatus(orderStatus);
-        }
+            order.setStatus(newOrderStatus);
         Order update = orderRepository.save(order);
-        return modelMapper.map(update, OrderResponseDTO.class);
+        return modelMapper.map(update, ResOrderDto.class);
     }
 
     @Override
-    public OrderResponseDTO findOrderById(Long orderId) {
+    public ResOrderDto cancelOrderByOrderId(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException("KHông tìm thấy đơn hàng theo id " + orderId));
-        return modelMapper.map(order, OrderResponseDTO.class);
-    }
-
-    @Override
-    public OrderResponseDTO updateOrderByPaymentMethodAndPaymentStatus(Long orderId, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException(" Không tìm thấy đơn hàng theo id " + orderId));
-        if(paymentMethod != null && paymentStatus != null){
+                .orElseThrow(()-> new RuntimeException("Order not found with id " + orderId));
             order.setDayCreate(LocalDateTime.now());
-            order.setPaymentStatus(paymentStatus);
-            order.setPaymentMethod(paymentMethod);
-        }
+            order.setStatus(OrderStatus.CANCELLED);
         Order update = orderRepository.save(order);
-        return modelMapper.map(update, OrderResponseDTO.class);
+        return modelMapper.map(update, ResOrderDto.class);
     }
 
     @Override
-    public OrderResponseDTO deleteOrder(Long orderId, OrderStatus orderStatus) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException(" Không tìm thấy đơn hàng theo id " + orderId));
-        if(orderStatus != null){
-            order.setDayCreate(LocalDateTime.now());
-            order.setStatus(orderStatus);
-        }
-        Order delete = orderRepository.save(order);
-        return modelMapper.map(delete, OrderResponseDTO.class);
+    public List<ResOrderDto> getAllOrder() {
+        List<Order> orderList = orderRepository.findAll();
+        List<ResOrderDto> resOrderDtoList = orderList.stream()
+                .map(order -> modelMapper.map(order, ResOrderDto.class))
+                .toList();
+        return  resOrderDtoList;
     }
 
     @Override
@@ -166,7 +164,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDTO updateOrderPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
+    public ResOrderDto updateOrderPaymentStatus(Long orderId, PaymentStatus paymentStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(()-> new RuntimeException(" Không tìm thấy đơn hàng theo id " + orderId));
         if(paymentStatus != null){
@@ -174,15 +172,15 @@ public class OrderServiceImpl implements OrderService {
             order.setPaymentStatus(paymentStatus);
         }
         Order update = orderRepository.save(order);
-        return modelMapper.map(update, OrderResponseDTO.class);
+        return modelMapper.map(update, ResOrderDto.class);
     }
 
     @Override
-    public List<OrderResponseDTO> findAllOrdersByStatus(OrderStatus orderStatus) {
+    public List<ResOrderDto> findAllOrdersByStatus(OrderStatus orderStatus) {
         List<Order> orders = orderRepository.findOrderByStatus(orderStatus);
 
         return orders.stream()
-                .map(order -> modelMapper.map(order, OrderResponseDTO.class))
+                .map(order -> modelMapper.map(order, ResOrderDto.class))
                 .collect(Collectors.toList());
     }
 

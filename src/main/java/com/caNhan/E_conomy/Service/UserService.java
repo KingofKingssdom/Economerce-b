@@ -1,9 +1,11 @@
 package com.caNhan.E_conomy.Service;
 
-import com.caNhan.E_conomy.Dto.ResponseDto.UserResponseDTO;
-import com.caNhan.E_conomy.Dto.UserDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResUserDto;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqUserDto;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface UserService {
-    UserResponseDTO create(UserDto userDto);
-    UserResponseDTO createAdmin(UserDto userDto);
+    ResUserDto createUser(ReqUserDto reqUserDto,String roleName);
+
 }

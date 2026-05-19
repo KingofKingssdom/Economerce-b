@@ -1,7 +1,8 @@
 package com.caNhan.E_conomy.Service.Impl;
 
+import com.caNhan.E_conomy.Dto.RequestDto.ReqCarItemDto;
 import com.caNhan.E_conomy.Dto.RequestDto.ReqProductVariantDto;
-import com.caNhan.E_conomy.Dto.ResponseDto.CartItemResponseDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResCartItemDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.ProductColorResponseDTO;
 import com.caNhan.E_conomy.Entity.*;
 import com.caNhan.E_conomy.GlobalExeption.Exception.NoSuchCustomerExistsException;
@@ -11,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,98 +21,101 @@ import java.util.stream.Collectors;
 public class CartItemSeriveImpl implements CartItemService {
     private CartItemRepository cartItemRepository;
     private CartRepository cartRepository;
-    private ProductRepository productRepository;
     private ProductVariantRepository productVariantRepository;
-    private ProductColorRepository productColorRepository;
+    private UserRepository userRepository;
     private ModelMapper modelMapper;
     @Autowired
     public CartItemSeriveImpl(CartItemRepository cartItemRepository,
                               CartRepository cartRepository,
-                              ProductRepository productRepository,
                               ProductVariantRepository productVariantRepository,
-                              ProductColorRepository productColorRepository,
+                              UserRepository userRepository,
                               ModelMapper modelMapper) {
         this.cartItemRepository = cartItemRepository;
         this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
         this.productVariantRepository = productVariantRepository;
-        this.productColorRepository = productColorRepository;
+        this.userRepository = userRepository;
         this.modelMapper = modelMapper;
     }
 
 
     @Override
-    public CartItemResponseDTO create(Long userId, Long productId, Long productVariantId, Long productColorId) {
-        Cart cart = cartRepository.findCartByUserId(userId);
-        Product product = productRepository.findById(productId).
-                orElseThrow(()-> new RuntimeException("Không tìm thấy sản phẩm với id " + productId));
-        ProductVariant productVariant = productVariantRepository.findById(productVariantId)
-                .orElseThrow(()-> new RuntimeException("Không tìm thấy phiên bản sản phẩm với id " + productVariantId));
-        ProductColor productColor = productColorRepository.findById(productColorId)
-                .orElseThrow(()-> new RuntimeException("Không tìm thấy màu sắc sản phẩm với id " + productColorId));
-        if (cart.getUser() == null) {
-            throw new NoSuchCustomerExistsException("Không tìm thấy giỏ hàng với user = " +userId);
+    public ResCartItemDto createCartItem(ReqCarItemDto reqCarItemDto) {
+        Optional<ProductVariant> productVariantOptional = productVariantRepository
+                .findById(reqCarItemDto.getProductVariantId());
+        if(productVariantOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Product variant not found with id "+ reqCarItemDto.getProductVariantId());
         }
-        Optional<CartItem> cartItemOptional = cartItemRepository.findByCartAndProductAndProductVariantAndProductColor(cart, product, productVariant, productColor);
-        CartItem cartItem;
+        Optional<Cart> cartOptional = cartRepository.findById(reqCarItemDto.getCartId());
+        double priceCurrent = productVariantOptional.get().getCurrentPrice();
+        Optional<CartItem> cartItemOptional = cartItemRepository
+                .findByCartIdAndVariantId(reqCarItemDto.getCartId(), reqCarItemDto.getProductVariantId());
+
         if(cartItemOptional.isPresent()){
-            cartItem = cartItemOptional.get();
-            cartItem.setQuantity(cartItem.getQuantity() +1);
+            cartItemOptional.get().setQuantity(reqCarItemDto.getQuantity() +1);
+            cartItemOptional.get().setPriceAtTime(priceCurrent);
+            CartItem saveCartItem =  cartItemRepository.save(cartItemOptional.get());
+            return modelMapper.map(saveCartItem, ResCartItemDto.class);
         }
         else {
-            cartItem = new CartItem();
-            cartItem.setCart(cart);
-            cartItem.setProductPrice(productVariant.getCurrentPrice());
-            cartItem.setProduct(product);
-            cartItem.setCategoryId(product.getCategory().getId());
-            cartItem.setProductColor(productColor);
-            cartItem.setProductVariant(productVariant);
+           CartItem cartItem = new CartItem();
             cartItem.setQuantity(1);
-
+            cartItem.setPriceAtTime(priceCurrent);
+            cartItem.setProductVariant(productVariantOptional.get());
+            cartItem.setCart(cartOptional.get());
+            double total = cartItem.getPriceAtTime() * cartItem.getQuantity();
+            cartItem.setTotalPrice(total);
+            CartItem saveCartItem = cartItemRepository.save(cartItem);
+            return modelMapper.map(saveCartItem, ResCartItemDto.class);
         }
-        double total = cartItem.getProductPrice() * cartItem.getQuantity();
-        cartItem.setTotalPrice(total);
-
-        CartItem saveCartItem = cartItemRepository.save(cartItem);
-        return modelMapper.map(saveCartItem, CartItemResponseDTO.class);
     }
-
     @Override
-    public List<CartItemResponseDTO> findAllByCartId(Long userId) {
+    public List<ResCartItemDto> getCartItemByUserId(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(userOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("User not found with id " + userId);
+        }
         Cart cart = cartRepository.findCartByUserId(userId);
-        if(cart == null) {
-            throw new NoSuchCustomerExistsException("Không tìm thấy giỏ hàng với user id " +userId );
-        }
-           List<CartItem> cartItems = cartItemRepository.findCartItemByCart(cart);
-
-
-        return cartItems.stream()
-                .map(item -> {
-                    CartItemResponseDTO dto = new CartItemResponseDTO();
-                    dto.setId(item.getId());
-                    dto.setQuantity(item.getQuantity());
-                    dto.setProductPrice(item.getProductPrice());
-                    dto.setTotalPrice(item.getTotalPrice());
-                    dto.setCategoryId(item.getCategoryId());
-                    if (item.getProduct() != null) {
-                        dto.setProductName(item.getProduct().getProductName());
-                    }
-                    if (item.getProductColor() != null) {
-                        dto.setProductColor(modelMapper.map(item.getProductColor(), ProductColorResponseDTO.class));
-                    }
-                    if (item.getProductVariant() != null) {
-                        dto.setProductVariant(modelMapper.map(item.getProductVariant(), ReqProductVariantDto.class));
-                    }
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        List<CartItem> cartItems = cartItemRepository.findCartItemByCart(cart);
+        List<ResCartItemDto> cartItemDtoList = cartItems.stream()
+                .map(cartItem -> modelMapper.map(cartItem, ResCartItemDto.class))
+                .toList();
+        return cartItemDtoList;
     }
 
     @Override
-    public void deleteByCartId(Long cartItemId) {
-        CartItem cart = cartItemRepository.findById(cartItemId)
-                .orElseThrow(()-> new RuntimeException("Không tìm  thấy món hàng theo id " + cartItemId));
-        cartItemRepository.delete(cart);
+    public ResCartItemDto updateCartItemByQuantity(Long cartItemId, int newQuantity) {
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemId);
+        if(cartItemOptional.isEmpty()){
+            throw new NoSuchCustomerExistsException("Cart item not found with id " + cartItemId);
+        }
+        cartItemOptional.get().setQuantity(newQuantity);
+        CartItem saveCartItem = cartItemRepository.save(cartItemOptional.get());
+        return modelMapper.map(saveCartItem, ResCartItemDto.class);
     }
+
+    @Override
+    public void deleteCartItemById(List<Long> cartItemIds, Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NoSuchCustomerExistsException("User not found with id " + userId);
+        }
+        Cart cart = cartRepository.findCartByUserId(userId);
+        if(cart == null){
+            throw new NoSuchCustomerExistsException("Cart not found with user id " + userId);
+        }
+        cartItemRepository.deleteSelectedItems(cartItemIds, cart.getCartId());
+
+    }
+
+    @Override
+    public void deleteAllCartItem(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NoSuchCustomerExistsException("User not found with id " + userId);
+        }
+
+        Cart cart = cartRepository.findCartByUserId(userId);
+        if (cart != null) {
+            cartItemRepository.deleteAllByCartId(cart.getCartId());
+        }
+    }
+
 }

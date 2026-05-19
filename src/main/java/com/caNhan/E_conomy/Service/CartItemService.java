@@ -1,12 +1,14 @@
 package com.caNhan.E_conomy.Service;
 
-import com.caNhan.E_conomy.Dto.CartItemDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.CartItemResponseDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqCarItemDto;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResCartItemDto;
 
 import java.util.List;
 
 public interface CartItemService {
-     CartItemResponseDTO create(Long userId, Long productId, Long productVariantId, Long productColorId);
-     List<CartItemResponseDTO> findAllByCartId(Long userId);
-     void deleteByCartId(Long cartItemId);
+     ResCartItemDto createCartItem(ReqCarItemDto reqCarItemDto);
+     List<ResCartItemDto> getCartItemByUserId(Long userId);
+     ResCartItemDto updateCartItemByQuantity(Long cartItemId, int newQuantity);
+     void deleteCartItemById(List<Long> cartItemIds, Long userId);
+     void deleteAllCartItem(Long userId);
 }

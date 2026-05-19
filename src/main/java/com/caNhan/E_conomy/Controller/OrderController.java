@@ -1,17 +1,14 @@
 package com.caNhan.E_conomy.Controller;
 
 import com.caNhan.E_conomy.Custom.CustomUserDetail;
-import com.caNhan.E_conomy.Dto.OrderDTO;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqOrderDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderCountStatusResponseDTO;
-import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTO;
+import com.caNhan.E_conomy.Dto.ResponseDto.ResOrderDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.OrderResponseDTOU;
-import com.caNhan.E_conomy.Entity.Cart;
-import com.caNhan.E_conomy.Entity.Order;
 import com.caNhan.E_conomy.Response.Enum.OrderStatus;
 import com.caNhan.E_conomy.Response.Enum.PaymentMethod;
 import com.caNhan.E_conomy.Response.Enum.PaymentStatus;
 import com.caNhan.E_conomy.Response.ResponseData;
-import com.caNhan.E_conomy.Service.CartService;
 import com.caNhan.E_conomy.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,12 +30,12 @@ public class OrderController {
         this.orderService = orderService;
     }
     @PostMapping("/create")
-    private ResponseEntity<?> checkout(@RequestBody OrderDTO orderDTO){
+    private ResponseEntity<?> checkout(@RequestBody ReqOrderDto orderDTO){
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         Long userId = customUserDetail.getId();
-        OrderResponseDTO order = orderService.create(userId,orderDTO.getCartItemIds());
+        ResOrderDto order = orderService.create(userId,orderDTO.getCartItemIds());
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Tạo đơn hàng thành công",
@@ -53,7 +50,7 @@ public class OrderController {
         Authentication authentication = securityContext.getAuthentication();
         CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
         Long userId = customUserDetail.getId();
-        List<OrderResponseDTO> orderResponse = orderService.findOrderByUser(userId);
+        List<ResOrderDto> orderResponse = orderService.findOrderByUser(userId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Lấy toàn bộ đơn hàng theo user thành công",
@@ -65,7 +62,7 @@ public class OrderController {
     @PutMapping("/update")
     private ResponseEntity<?> updateOrderStatus (@RequestParam (name = "orderId") Long orderId,
                                                  @RequestParam (name = "status")OrderStatus status) {
-        OrderResponseDTO orderResponseDTO = orderService.updateOrderStatus(orderId, status);
+        ResOrderDto orderResponseDTO = orderService.updateOrderStatus(orderId, status);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Cập nhập trạng thái giao hàng thành công",
@@ -78,7 +75,7 @@ public class OrderController {
             @RequestParam (name = "orderId") Long orderId,
             @RequestParam (name = "paymentMethod") PaymentMethod paymentMethod,
             @RequestParam (name = "paymentStatus")PaymentStatus paymentStatus) {
-        OrderResponseDTO orderResponseDTO = orderService.
+        ResOrderDto orderResponseDTO = orderService.
                 updateOrderByPaymentMethodAndPaymentStatus(orderId, paymentMethod, paymentStatus);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
@@ -89,7 +86,7 @@ public class OrderController {
     }
     @GetMapping("/search")
     private ResponseEntity<?> getOrderById(@RequestParam(name = "orderId") Long orderId) {
-        OrderResponseDTO orderResponseDTO = orderService.findOrderById(orderId);
+        ResOrderDto orderResponseDTO = orderService.findOrderById(orderId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Tìm đơn hàng theo id thanh công",
@@ -101,7 +98,7 @@ public class OrderController {
     @PutMapping("/delete")
     private ResponseEntity<?> deleteOrder (@RequestParam (name = "orderId") Long orderId,
                                            @RequestParam (name = "status")OrderStatus status) {
-        OrderResponseDTO orderResponseDTO = orderService.deleteOrder(orderId, status);
+        ResOrderDto orderResponseDTO = orderService.deleteOrder(orderId, status);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Cập nhập trạng thái giao hàng thành công",
@@ -125,7 +122,7 @@ public class OrderController {
     private ResponseEntity<?> updateOrderByPPaymentStatus (
             @RequestParam (name = "orderId") Long orderId,
             @RequestParam (name = "paymentStatus")PaymentStatus paymentStatus) {
-        OrderResponseDTO orderResponseDTO = orderService.
+        ResOrderDto orderResponseDTO = orderService.
                 updateOrderPaymentStatus(orderId, paymentStatus);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
@@ -138,7 +135,7 @@ public class OrderController {
     @GetMapping("/search/orderStatus")
     private ResponseEntity<?> getOrderByOrderStatus (
             @RequestParam("orderStatus") OrderStatus orderStatus) {
-        List<OrderResponseDTO> orderResponseDTOS =
+        List<ResOrderDto> orderResponseDTOS =
                 orderService.findAllOrdersByStatus(orderStatus);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),

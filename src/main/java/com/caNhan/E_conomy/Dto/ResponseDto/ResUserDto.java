@@ -1,45 +1,34 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-import com.caNhan.E_conomy.Dto.RoleDTO;
-
 import java.util.List;
 
-public class UserResponseDTO {
+public class ResUserDto {
     private Long id;
     private String fullName;
     private String phoneNumber;
     private String email;
-    private List<RoleDTO> roles;
+    private List<ResRoleDto> roles;
 
-    public UserResponseDTO() {
+    public ResUserDto() {
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
-
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public List<RoleDTO> getRoles() {
+    public List<ResRoleDto> getRoles() {
         return roles;
     }
-
-    public void setRoles(List<RoleDTO> roles) {
+    public void setRoles(List<ResRoleDto> roles) {
         this.roles = roles;
     }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }

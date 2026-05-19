@@ -1,10 +1,10 @@
 package com.caNhan.E_conomy.Dto.ResponseDto;
 
-public class RoleResponseDTO {
+public class ResRoleDto {
     private Long id;
     private String roleName;
 
-    public RoleResponseDTO() {
+    public ResRoleDto() {
     }
 
     public Long getId() {

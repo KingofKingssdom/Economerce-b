@@ -16,6 +16,8 @@ public class Order {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "order_code")
+    private String orderCode;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
@@ -27,9 +29,10 @@ public class Order {
     private LocalDateTime dayCreate;
     @Column(name = "total_price")
     private double totalPrice;
-    @Column(name = "order_name")
-    private String orderName;
-    // Các quan hệ mapping
+    private String receiverName;
+    private String receiverPhone;
+    public String shippingAddress;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -101,11 +104,35 @@ public class Order {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getOrderName() {
-        return orderName;
+    public String getOrderCode() {
+        return orderCode;
     }
 
-    public void setOrderName(String orderName) {
-        this.orderName = orderName;
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getReceiverPhone() {
+        return receiverPhone;
+    }
+
+    public void setReceiverPhone(String receiverPhone) {
+        this.receiverPhone = receiverPhone;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 }

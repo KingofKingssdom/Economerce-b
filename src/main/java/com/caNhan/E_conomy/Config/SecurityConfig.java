@@ -1,5 +1,6 @@
 package com.caNhan.E_conomy.Config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,11 +11,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,11 +27,15 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Autowired
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -36,9 +43,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/auth/admin/login").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/product/**").permitAll()
-                        .requestMatchers("/api/productColor/**").permitAll()
                         .requestMatchers("/api/productVariant/**").permitAll()
                         .requestMatchers("/api/productSpecification/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
@@ -53,32 +59,34 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 )
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sử dụng session
+              .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sử dụng session
                 .formLogin(form -> form.disable());
+        // 4. CHÈN BỘ LỌC JWT CỦA CHÚNG TA VÀO TRƯỚC BỘ LỌC MẶC ĐỊNH CỦA SPRING
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
-   @Bean
-    public AuthenticationManager authenticationManager (
-            AuthenticationConfiguration authenticationConfiguration
-   ) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-   }
+//   @Bean
+//    public AuthenticationManager authenticationManager (
+//            AuthenticationConfiguration authenticationConfiguration
+//   ) throws Exception {
+//        return authenticationConfiguration.getAuthenticationManager();
+//   }
 
-   @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider (
-            UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder
-   ) {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-    provider.setPasswordEncoder(passwordEncoder);
-    return  provider;
-   }
+//   @Bean
+//    public DaoAuthenticationProvider daoAuthenticationProvider (
+//            UserDetailsService userDetailsService,
+//            PasswordEncoder passwordEncoder
+//   ) {
+//    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+//    provider.setPasswordEncoder(passwordEncoder);
+//    return  provider;
+//   }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5500"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
 //                "https://g814wts5-3000.asse.devtunnels.ms",
 //                "https://g814wts5-8080.asse.devtunnels.ms"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

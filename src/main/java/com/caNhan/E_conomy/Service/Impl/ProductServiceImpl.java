@@ -91,6 +91,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ResProductDto getProductById(Long id) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if(optionalProduct.isEmpty()){
+            throw new NoSuchCustomerExistsException("Product not found with id " + id);
+        }
+        return modelMapper.map(optionalProduct.get(), ResProductDto.class);
+    }
+
+    @Override
     public ResProductDto updateProduct(long productId, ReqProductDto reqProductDto) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if(productOptional.isEmpty()){
@@ -133,8 +142,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ResProductDto> getAllProductByFeatured(boolean featured) {
-        List<Product> products = productRepository.findAllByFeatured(featured);
+    public List<ResProductDto> getAllProductByFeaturedAndCategory(boolean featured, Long categoryId) {
+        List<Product> products = productRepository.findAllByFeatureAndCategory(featured, categoryId);
         return products.stream()
                 .map(product -> {
             ResProductDto dto = modelMapper.map(product, ResProductDto.class);

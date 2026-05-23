@@ -7,7 +7,7 @@
 ## 🚀 Công nghệ sử dụng
 
 - ☕ **Java 17 (JDK 17)**
-- 🌱 **Spring Boot**
+- 🌱 **Spring Boot 3.5.5**
 - 🔐 **Spring Security**
 - 🧩 **Spring Data JPA**
 - 🗄️ **MySQL**

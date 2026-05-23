@@ -24,9 +24,9 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> findByCategoryAndBrand(@Param("categoryId") Long categoryId,
                                          @Param("brandId") Long BrandId);
     @Query("SELECT p FROM Product p" +
-    " WHERE p.promotional = :promotional AND p.category.id = :categoryId"
+    " WHERE p.featured = :featured AND p.category.id = :categoryId"
     )
-    List<Product> findAllByPromotionalAndCategory (@Param("promotional") boolean promotional,
+    List<Product> findAllByFeatureAndCategory (@Param("featured") boolean featured,
                                                    @Param("categoryId") Long categoryId);
     List<Product> findAllByFeatured (boolean featured);
     List<Product> findAllByPromotional (boolean promotional);

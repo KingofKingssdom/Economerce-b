@@ -1,16 +1,23 @@
 package com.caNhan.E_conomy.Controller;
 
+import com.caNhan.E_conomy.Entity.User;
+import com.caNhan.E_conomy.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-//    private UserService userService;
-//    //private PasswordEncoder passwordEncoder;
-//    @Autowired
-//    public UserController(UserService userService) {
-//        this.userService = userService;
-//    }
+   private UserService userService;
+   //private PasswordEncoder passwordEncoder;
+   @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 //    @PostMapping("/register")
 //    private ResponseEntity<?> saveUser(@ModelAttribute UserDto userDto){
 //        UserResponseDTO userResponseDTO = userService.create(userDto);
@@ -22,11 +29,7 @@ public class UserController {
 //        return ResponseEntity.ok(responseData);
 //
 //    }
-//    @GetMapping("/getAll")
-//    public ResponseEntity<?> getAllUser(){
-//        List<UserDto> userDtos = userService.findAllUser();
-//        return ResponseEntity.ok(userDtos);
-//    }
+
 //    @GetMapping("{id}")
 //    public ResponseEntity<?> getUserById(@PathVariable int id) {
 //        UserDto userDto = userService.findUserById(id);
@@ -42,14 +45,20 @@ public class UserController {
 ////        return ResponseEntity.status(401).body("Email hoặc mật khẩu không đúng!");
 ////    }
 //
-//    @GetMapping("/me")
-//    public ResponseEntity<?> getCurrentUser(HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        if (user == null) {
-//            return ResponseEntity.status(401).body("Chưa đăng nhập!");
-//        }
-//        return ResponseEntity.ok(new UserResponse(user.getId(), user.getFirstName()));
-//    }
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        User currentUser = (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if (currentUser == null) {
+            return ResponseEntity.status(401).body("Chưa đăng nhập!");
+        }
+        return ResponseEntity.ok(Map.of(
+                "id", currentUser.getId(),
+                "username", currentUser.getEmail(),
+                "fullName", currentUser.getFullName()
+        ));
+    }
 //    public record UserResponse(int id, String firstName) {}
 
 }

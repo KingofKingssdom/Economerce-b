@@ -1,11 +1,12 @@
 package com.caNhan.E_conomy.Controller;
 
 import com.caNhan.E_conomy.Custom.CustomUserDetail;
-import com.caNhan.E_conomy.Dto.RequestDto.Login;
+import com.caNhan.E_conomy.Dto.RequestDto.ReqLoginDto;
 import com.caNhan.E_conomy.Dto.ResponseDto.LoginResponseDTO;
 import com.caNhan.E_conomy.Dto.ResponseDto.ResUserDto;
 import com.caNhan.E_conomy.Dto.RequestDto.ReqUserDto;
 import com.caNhan.E_conomy.Response.ResponseData;
+import com.caNhan.E_conomy.Service.Impl.LoginServiceImpl;
 import com.caNhan.E_conomy.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -24,11 +25,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private UserService userService;
-    private AuthenticationManager authenticationManager;
+//    private AuthenticationManager authenticationManager;
+    private LoginServiceImpl loginService;
     @Autowired
-    public AuthController(UserService userService, AuthenticationManager authenticationManager) {
+    public AuthController(UserService userService, LoginServiceImpl loginService) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
+        this.loginService = loginService;
     }
     @PostMapping("/register/{roleName}")
     private ResponseEntity<?> saveUser(@ModelAttribute ReqUserDto reqUserDto,
@@ -42,45 +44,51 @@ public class AuthController {
         return ResponseEntity.ok(responseData);
 
     }
+
     @PostMapping("/login")
-    private ResponseEntity<?> login (@RequestBody Login login, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
-        //  lưu SecurityContext vào HttpSession
-        HttpSession session = request.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-
-        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
-
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.setId(userDetails.getId());
-        loginResponseDTO.setFullName(userDetails.getUsername());
-        session.setAttribute("USER_ID", userDetails.getId());
-        return ResponseEntity.ok(loginResponseDTO);
+    private ResponseEntity<?> login(@ModelAttribute ReqLoginDto reqLoginDto){
+        String text = loginService.authenticateUser(reqLoginDto);
+        return ResponseEntity.ok(text);
     }
-
-    @PostMapping("/admin/login")
-    private ResponseEntity<?> loginAdmin (@RequestBody Login login, HttpServletRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
-        //  lưu SecurityContext vào HttpSession
-        HttpSession session = request.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-
-        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
-
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.setId(userDetails.getId());
-        loginResponseDTO.setFullName(userDetails.getUsername());
-        session.setAttribute("USER_ID", userDetails.getId());
-        return ResponseEntity.ok(loginResponseDTO);
-    }
+//    @PostMapping("/login")
+//    private ResponseEntity<?> login (@RequestBody ReqLoginDto login, HttpServletRequest request) {
+//        UsernamePasswordAuthenticationToken token =
+//                new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
+//        Authentication authentication = authenticationManager.authenticate(token);
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        securityContext.setAuthentication(authentication);
+//
+//        //  lưu SecurityContext vào HttpSession
+//        HttpSession session = request.getSession(true);
+//        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+//
+//        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+//
+//        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+//        loginResponseDTO.setId(userDetails.getId());
+//        loginResponseDTO.setFullName(userDetails.getUsername());
+//        session.setAttribute("USER_ID", userDetails.getId());
+//        return ResponseEntity.ok(loginResponseDTO);
+//    }
+//
+//    @PostMapping("/admin/login")
+//    private ResponseEntity<?> loginAdmin (@RequestBody ReqLoginDto login, HttpServletRequest request) {
+//        UsernamePasswordAuthenticationToken token =
+//                new UsernamePasswordAuthenticationToken(login.getPhoneNumber(), login.getPassword());
+//        Authentication authentication = authenticationManager.authenticate(token);
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        securityContext.setAuthentication(authentication);
+//
+//        //  lưu SecurityContext vào HttpSession
+//        HttpSession session = request.getSession(true);
+//        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+//
+//        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+//
+//        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
+//        loginResponseDTO.setId(userDetails.getId());
+//        loginResponseDTO.setFullName(userDetails.getUsername());
+//        session.setAttribute("USER_ID", userDetails.getId());
+//        return ResponseEntity.ok(loginResponseDTO);
+//    }
 }

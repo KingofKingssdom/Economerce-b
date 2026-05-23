@@ -50,7 +50,16 @@ public class ProductController {
         );
         return ResponseEntity.ok(responseData);
     }
-
+    @GetMapping("/productId/{productId}")
+    private ResponseEntity<?> GetById(@PathVariable Long productId){
+        ResProductDto resProductDto = productService.getProductById(productId);
+        ResponseData responseData = new ResponseData(
+                HttpStatus.OK.value(),
+                "Data retrieved successfully",
+                resProductDto
+        );
+        return  ResponseEntity.ok(responseData);
+    }
     @PutMapping("/{productId}")
     private ResponseEntity<?> update(@PathVariable long productId,
                                      @ModelAttribute ReqProductDto reqProductDto){
@@ -72,23 +81,11 @@ public class ProductController {
         );
         return ResponseEntity.ok(responseData);
     }
-//    @GetMapping("/get/category/brand")
-//    private ResponseEntity<?> getProductByCategoryIdAndBrandId(@RequestParam(value = "categoryId") Long categoryId,
-//                                                               @RequestParam(value = "brandId") Long brandId,
-//                                                               @RequestParam(defaultValue = "0") int pageNumber,
-//                                                               @RequestParam(defaultValue = "8") int pageSize) {
-//      Page<ResProductDto> productResponseDTOS = productService.readByCategoryAndBrand(categoryId, brandId, pageNumber, pageSize);
-//      ResponseData responseData = new ResponseData(
-//              HttpStatus.OK.value(),
-//              "Lấy sản phẩm theo danh mục và nhãn hiệu thành công",
-//              productResponseDTOS
-//      );
-//      return ResponseEntity.ok(responseData);
-//    }
 
     @GetMapping("/feature")
-    private ResponseEntity<?> getAllByFeatured (@RequestParam (name = "featured") boolean featured) {
-        List<ResProductDto> resProductDtoList = productService.getAllProductByFeatured(featured);
+    private ResponseEntity<?> getAllByFeatured (@RequestParam (name = "featured") boolean featured,
+                                                @RequestParam(name = "categoryId") Long categoryId) {
+        List<ResProductDto> resProductDtoList = productService.getAllProductByFeaturedAndCategory(featured, categoryId);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),
                 "Data retrieved successfully",

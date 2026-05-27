@@ -21,7 +21,7 @@ Cấu hình database
   mysql -u root -p ecommerce < src/demo/database.sql
 
 👤 Tài khoản test:
-Username: 0912345678
+email: vanan@gmail.com
 Password: 123
 ---
 ⚙️Tạo File .env Cho Backend

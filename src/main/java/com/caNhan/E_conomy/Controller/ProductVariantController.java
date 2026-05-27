@@ -19,9 +19,8 @@ public class ProductVariantController {
     public ProductVariantController(ProductVariantService productVariantService) {
         this.productVariantService = productVariantService;
     }
-    @PostMapping("/productId/${productId}")
-    private ResponseEntity<?> create(@PathVariable Long productId,
-                                     @ModelAttribute ReqProductVariantDto reqProductVariantDto){
+    @PostMapping
+    private ResponseEntity<?> create(@ModelAttribute ReqProductVariantDto reqProductVariantDto){
         ResProductVariantDto resProductVariantDto = productVariantService.createProductVariant(reqProductVariantDto);
         ResponseData responseData = new ResponseData(
                 HttpStatus.OK.value(),

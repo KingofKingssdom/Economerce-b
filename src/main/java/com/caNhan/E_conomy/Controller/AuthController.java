@@ -9,9 +9,12 @@ import com.caNhan.E_conomy.Response.ResponseData;
 import com.caNhan.E_conomy.Service.Impl.LoginServiceImpl;
 import com.caNhan.E_conomy.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +23,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,9 +52,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    private ResponseEntity<?> login(@ModelAttribute ReqLoginDto reqLoginDto){
+    private ResponseEntity<?> login(@ModelAttribute ReqLoginDto reqLoginDto,
+                                    HttpServletResponse response){
         String text = loginService.authenticateUser(reqLoginDto);
-        return ResponseEntity.ok(text);
+        ResponseCookie responseCookie = ResponseCookie.from("accessToken",text)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(15*60)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        Map<String, String> resbody = new HashMap<>();
+        resbody.put("Message", "Login successful");
+        return ResponseEntity.ok(resbody);
     }
 //    @PostMapping("/login")
 //    private ResponseEntity<?> login (@RequestBody ReqLoginDto login, HttpServletRequest request) {

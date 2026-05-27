@@ -4,6 +4,7 @@ import com.caNhan.E_conomy.Entity.User;
 import com.caNhan.E_conomy.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,15 +48,15 @@ public class UserController {
 //
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
-        User currentUser = (User) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-        if (currentUser == null) {
+        Authentication authentication = SecurityContextHolder.getContext()
+                .getAuthentication();
+        if (authentication == null) {
             return ResponseEntity.status(401).body("Chưa đăng nhập!");
         }
+        User currentUser = (User) authentication.getPrincipal();
+
         return ResponseEntity.ok(Map.of(
                 "id", currentUser.getId(),
-                "username", currentUser.getEmail(),
                 "fullName", currentUser.getFullName()
         ));
     }
